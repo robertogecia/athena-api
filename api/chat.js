@@ -25,7 +25,7 @@ export default async function handler(req, res) {
     if (i === 0 && msg.role === 'user') {
       systemPrompt = msg.content;
     } else if (i === 1 && msg.role === 'assistant') {
-      // skip — this is the assistant acknowledgment of system prompt
+      // skip
     } else if (msg.role === 'user' || msg.role === 'assistant') {
       chatMessages.push({ role: msg.role, content: msg.content });
     }
@@ -36,11 +36,11 @@ export default async function handler(req, res) {
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  console.log('Key length:', apiKey ? apiKey.length : 0, 'starts:', apiKey ? apiKey.substring(0, 14) : 'none');
+  console.log('Key:', apiKey ? apiKey.substring(0, 20) + '...' : 'none');
 
   try {
     const body = {
-      model: 'claude-3-5-haiku-20241022',
+      model: 'claude-3-sonnet-20240229',
       max_tokens: 1024,
       messages: chatMessages,
     };
@@ -60,7 +60,7 @@ export default async function handler(req, res) {
     });
 
     const responseText = await response.text();
-    console.log('Anthropic status:', response.status, 'body:', responseText.substring(0, 300));
+    console.log('Status:', response.status, 'Body:', responseText.substring(0, 200));
 
     if (!response.ok) {
       let errData = {};
@@ -73,7 +73,7 @@ export default async function handler(req, res) {
     return res.status(200).json({ reply: text });
 
   } catch (err) {
-    console.log('Catch error:', err.message);
+    console.log('Error:', err.message);
     return res.status(500).json({ error: err.message });
   }
 }
