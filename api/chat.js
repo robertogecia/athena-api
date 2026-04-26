@@ -36,10 +36,11 @@ export default async function handler(req, res) {
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
+  console.log('Key length:', apiKey ? apiKey.length : 0, 'starts:', apiKey ? apiKey.substring(0, 14) : 'none');
 
   try {
     const body = {
-      model: 'claude-3-haiku-20240307',
+      model: 'claude-3-5-haiku-20241022',
       max_tokens: 1024,
       messages: chatMessages,
     };
@@ -59,6 +60,7 @@ export default async function handler(req, res) {
     });
 
     const responseText = await response.text();
+    console.log('Anthropic status:', response.status, 'body:', responseText.substring(0, 300));
 
     if (!response.ok) {
       let errData = {};
@@ -71,6 +73,7 @@ export default async function handler(req, res) {
     return res.status(200).json({ reply: text });
 
   } catch (err) {
+    console.log('Catch error:', err.message);
     return res.status(500).json({ error: err.message });
   }
 }
