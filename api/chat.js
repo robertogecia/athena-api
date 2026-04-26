@@ -1,4 +1,4 @@
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -17,18 +17,15 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid messages' });
   }
 
-  // Extrair system prompt (primeira mensagem com role 'user' que contém o prompt do sistema)
-  // e filtrar apenas mensagens válidas user/assistant
   let systemPrompt = '';
   let chatMessages = [];
 
   for (let i = 0; i < messages.length; i++) {
     const msg = messages[i];
-    // As 2 primeiras mensagens são o system prompt (user + assistant de confirmação)
     if (i === 0 && msg.role === 'user') {
       systemPrompt = msg.content;
     } else if (i === 1 && msg.role === 'assistant') {
-      // pular - é a mensagem de confirmação do sistema
+      // skip
     } else if (msg.role === 'user' || msg.role === 'assistant') {
       chatMessages.push({ role: msg.role, content: msg.content });
     }
@@ -59,4 +56,16 @@ module.exports = async function handler(req, res) {
       body: JSON.stringify(body),
     });
 
-    if (!resp
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      return res.status(response.status).json({ error: errData.error || 'Anthropic API error' });
+    }
+
+    const data = await response.json();
+    const text = data.content[0].text;
+    return res.status(200).json({ content: text });
+
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+}
