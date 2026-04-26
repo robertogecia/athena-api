@@ -35,6 +35,9 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'No valid messages' });
   }
 
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  console.log('API key present:', !!apiKey, 'length:', apiKey ? apiKey.length : 0, 'starts:', apiKey ? apiKey.substring(0, 12) : 'none');
+
   try {
     const body = {
       model: 'claude-3-haiku-20240307',
@@ -50,22 +53,27 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'x-api-key': apiKey,
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify(body),
     });
 
+    const responseText = await response.text();
+    console.log('Anthropic status:', response.status, 'body:', responseText.substring(0, 200));
+
     if (!response.ok) {
-      const errData = await response.json().catch(() => ({}));
-      return res.status(response.status).json({ error: errData.error || 'Anthropic API error' });
+      let errData = {};
+      try { errData = JSON.parse(responseText); } catch(e) {}
+      return res.status(response.status).json({ error: errData.error || responseText });
     }
 
-    const data = await response.json();
+    const data = JSON.parse(responseText);
     const text = data.content[0].text;
     return res.status(200).json({ content: text });
 
   } catch (err) {
+    console.log('Catch error:', err.message);
     return res.status(500).json({ error: err.message });
   }
 }
