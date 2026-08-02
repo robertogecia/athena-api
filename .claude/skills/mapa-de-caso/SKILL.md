@@ -1,6 +1,19 @@
 ---
 name: mapa-de-caso
-description: Lê os autos (PDFs e documentos de uma pasta do caso), monta o mapa do caso — a cadeia pedido ← tese ← fato ← prova, com partes, contra-teses e prazos — e diagnostica as lacunas antes da redação: alegação sem prova, pedido descoberto, fato não impugnado, contra-tese sem resposta, contradição de datas e preclusão iminente. Delega a subagentes em paralelo a pesquisa de jurisprudência (JusRatio), de precedente local (TJRO) e de doutrina na web. Use SEMPRE antes de redigir peça (inicial, contestação, réplica, recurso, parecer) quando o caso tiver mais de um fato, prova ou pedido — mesmo que o pedido do usuário seja direto "redija a contestação", monte o mapa primeiro e só então redija. Use também quando o usuário mandar analisar autos, organizar caso, montar cronologia, avaliar viabilidade de ação ou achar o ponto fraco de uma tese. Não use para formatar/timbrar texto já pronto (isso é peticao-rg) nem para revisar um trecho isolado.
+description: >-
+  Lê os autos (PDFs e documentos de uma pasta do caso), monta o mapa do caso — a
+  cadeia pedido ← tese ← fato ← prova, com partes, contra-teses e prazos — e
+  diagnostica as lacunas antes da redação — alegação sem prova, pedido
+  descoberto, fato não impugnado, contra-tese sem resposta, contradição de datas
+  e preclusão iminente. Delega a subagentes em paralelo a pesquisa de
+  jurisprudência (JusRatio), de precedente local (TJRO) e de doutrina na web.
+  Use SEMPRE antes de redigir peça (inicial, contestação, réplica, recurso,
+  parecer) quando o caso tiver mais de um fato, prova ou pedido — mesmo que o
+  pedido do usuário seja direto, do tipo redija a contestação, monte o mapa
+  primeiro e só então redija. Use também quando o usuário mandar analisar autos,
+  organizar caso, montar cronologia, avaliar viabilidade de ação ou achar o
+  ponto fraco de uma tese. Não use para formatar ou timbrar texto já pronto
+  (isso é peticao-rg) nem para revisar um trecho isolado.
 ---
 
 # Mapa de Caso
@@ -135,6 +148,12 @@ Julgado inventado em peça rende multa de 1% a 10% do valor da causa (CPC arts. 
 | 7 | **Prova frágil ou solta** | `PV` unilateral/suspeita, ou que não prova fato nenhum alegado | 🟡 |
 | 8 | **Preclusão iminente** | Matéria que só pode ser alegada agora | 🔴 — ver `references/checklists-cpc.md` |
 
+Fechado o checklist, levante os olhos dos autos e pergunte duas coisas — elas não saem de nenhuma lista, e é onde costuma estar o que vira o jogo:
+
+**O que existe fora dos autos?** Lacuna probatória raramente se resolve só com o que já está na pasta. Certidão de órgão público (habite-se, alvará, licença, ART/RRT no CREA, boletim de ocorrência), ata notarial para congelar estado de fato que o tempo apaga, exibição de documento em poder da outra parte ou de terceiro (arts. 396 e ss.), ofício a banco ou operadora, prova emprestada de outro processo. Documento oficial contra a tese adversária vale mais que três testemunhas favoráveis — e converte lacuna em diligência, que é ação, não fraqueza.
+
+**Quanto vale isso, de verdade?** Feche com uma leitura econômica em duas ou três linhas: o cenário provável em números, a faixa de acordo razoável, e o custo de litigar até o fim. O advogado precisa disso para conversar com o cliente antes da peça — e às vezes o mapa mostra que o melhor resultado possível é pior que um acordo que já está na mesa.
+
 **A regra do verde.** 🟢 exige as três: cadeia fecha em prova existente, dispositivo conferido no texto da lei, e precedente verificado nesta sessão. Faltando qualquer uma, no máximo 🟡. Tese que depende de `A` ou que tem 🔴 na cadeia **herda o 🔴** — nunca aparece como 🟡 ou 🟢.
 
 E o rodapé obrigatório da matriz: *"🟢 significa 'sem lacuna detectada pelo checklist', não 'pronto para protocolar'."*
@@ -174,8 +193,13 @@ Não invente fato nem suponha prova para fechar lacuna. Lacuna aberta é o produ
 - [lacuna] → [ação concreta]
 ### 🟡 Atenção
 ### ⏰ Prazo e preclusão
+### 🔍 Diligências fora dos autos
+- [certidão, ata notarial, exibição, ofício] → [o que provaria]
 
-## 8. Próximo passo
+## 8. Leitura econômica
+[cenário provável em números · faixa de acordo · custo de litigar]
+
+## 9. Próximo passo
 ```
 
 **A matriz é a fonte de verdade.** Ela sai sempre. O diagrama é derivado e opcional: gere quando o usuário pedir ou quando houver mais de duas partes ou mais de quatro pedidos — casos em que o desenho realmente ajuda a enxergar. Convenções em `references/diagrama.md`.
