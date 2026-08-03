@@ -4,7 +4,9 @@ Pesquisa boa depende de pergunta concreta. Por isso a delegação vem **depois**
 
 Dispare todos os agentes **numa única mensagem, em paralelo**. São independentes entre si; rodar em série só desperdiça tempo.
 
-## Frente 1 — Jurisprudência (JusRatio)
+**Se os subagentes nomeados `pesquisador-juridico` e `leitor-de-autos` existirem** (`.claude/agents/`), use-os pelo nome — eles já têm a regra dura de citação e o escopo de ferramentas embutidos, então a delegação só precisa passar o concreto do caso (tese, dispositivo, documento), não reexplicar o método. Sem eles instalados, delegue a um agente genérico com as instruções completas de cada frente abaixo.
+
+## Frente 1 — Jurisprudência (`pesquisador-juridico`, via JusRatio)
 
 Um agente por tese estruturante. Teses acessórias podem ir juntas num agente só.
 
@@ -34,7 +36,7 @@ Quando o caso corre ou vai correr no TJRO, o entendimento da câmara que vai jul
 
 Peça ao agente que separe o que é entendimento consolidado da câmara do que é decisão isolada, e que aponte divergência entre câmaras, se houver: divergência interna é argumento e é risco.
 
-## Frente 3 — Doutrina (web)
+## Frente 3 — Doutrina (`pesquisador-juridico`, via web)
 
 Para tese controvertida, nova, ou com pouca jurisprudência — onde o argumento precisa de autoridade acadêmica.
 
@@ -42,7 +44,7 @@ Para tese controvertida, nova, ou com pouca jurisprudência — onde o argumento
 - Artigo de periódico jurídico, parecer publicado e manual de referência valem; post de blog e conteúdo de escritório valem como pista, não como fonte.
 - Instrução explícita: **não invente citação doutrinária**. Autor e obra existentes com tese trocada é erro comum e difícil de flagrar.
 
-## Frente 4 — Leitura de documento volumoso
+## Frente 4 — Leitura de documento volumoso (`leitor-de-autos`)
 
 Um agente por documento pesado (laudo extenso, contrato longo, peça da parte contrária com muitos anexos).
 
