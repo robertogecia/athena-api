@@ -223,6 +223,8 @@ O mapa é diagnóstico, não índice de parágrafos — se a peça pedir outra o
 
 Para o documento final timbrado em DOCX/PDF, use a skill `peticao-rg`.
 
+Se a skill `segundo-cerebro` estiver instalada e a peça já tiver sido redigida (não antes — só o que de fato foi usado entra lá), ofereça depositar as teses e os precedentes verificados deste caso. É o que faz o próximo caso sobre o mesmo tema começar sem pesquisar do zero.
+
 ## Sigilo
 
 O mapa reúne partes identificadas, valores, provas e a lista das fraquezas do cliente. É o arquivo mais sensível do caso.

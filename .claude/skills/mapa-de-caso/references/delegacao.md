@@ -6,6 +6,10 @@ Dispare todos os agentes **numa única mensagem, em paralelo**. São independent
 
 **Se os subagentes nomeados `pesquisador-juridico` e `leitor-de-autos` existirem** (`.claude/agents/`), use-os pelo nome — eles já têm a regra dura de citação e o escopo de ferramentas embutidos, então a delegação só precisa passar o concreto do caso (tese, dispositivo, documento), não reexplicar o método. Sem eles instalados, delegue a um agente genérico com as instruções completas de cada frente abaixo.
 
+## Antes de tudo — já existe isso no segundo cérebro?
+
+Se a skill `segundo-cerebro` estiver instalada (`~/segundo-cerebro/`), consulte o `indice.md` de lá antes de delegar qualquer pesquisa. Tese com nota lá já tem precedentes verificados com data — reconfirme se estiver com mais de 6 meses, mas não pesquise do zero o que já foi verificado. Sem isso instalado, todas as frentes abaixo partem do zero.
+
 ## Frente 1 — Jurisprudência (`pesquisador-juridico`, via JusRatio)
 
 Um agente por tese estruturante. Teses acessórias podem ir juntas num agente só.
