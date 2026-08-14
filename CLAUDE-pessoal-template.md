@@ -27,15 +27,19 @@ Quatro peças que trabalham juntas, instaladas em `~/.claude/skills/` e `~/.clau
 
 ## Quanto de esforço usar em cada caso
 
-Não force multiagente/pipeline em todo caso — a maioria não precisa, e orquestração pesada sem necessidade só custa tempo e tokens sem ganho. Escale de acordo com o que o caso realmente tem:
+Não force multiagente/pipeline em todo caso — a maioria não precisa, e orquestração pesada sem necessidade só custa tempo e tokens sem ganho.
 
-- **1 fato, 1 prova, 1 pedido, sem documento pesado**: `mapa-de-caso` direto, sem delegar nada — cabe tudo numa análise só.
-- **2 ou mais teses, documento pesado (laudo, contrato longo), ou precisa de pesquisa de jurisprudência/doutrina**: `mapa-de-caso` delega aos subagentes nomeados (`pesquisador-juridico`, `leitor-de-autos`) em paralelo — é o caso comum.
+**Antes de contar teses e documentos para decidir a escala, consulte o `segundo-cerebro`.** Ele existe para encolher essa conta: tese com nota lá, `verificado_em` dentro de 6 meses, não entra como "precisa de pesquisa" — já está resolvida, só falta ler. Só depois de descontar o que o acervo já responde, escale pelo que sobrou:
+
+- **1 fato, 1 prova, 1 pedido, sem documento pesado e sem pesquisa pendente**: `mapa-de-caso` direto, sem delegar nada — cabe tudo numa análise só.
+- **2 ou mais teses ainda sem nota verificada no segundo cérebro, documento pesado (laudo, contrato longo), ou precisa de pesquisa de jurisprudência/doutrina**: `mapa-de-caso` delega aos subagentes nomeados (`pesquisador-juridico`, `leitor-de-autos`) em paralelo — é o caso comum.
 - **Muitas partes com posição própria a comparar** (litisconsórcio numeroso, concurso de credores em falência/recuperação/inventário) **ou muitos documentos**: aí sim vale perguntar se cabe um workflow de agentes maior para a etapa de leitura e pesquisa — o limiar exato de quando isso compensa está em `references/delegacao.md` do `mapa-de-caso`; não repito o número aqui para as duas referências não desalinharem com o tempo.
 
 **Mesmo delegando a coleta, a comparação final é sempre sua.** Agentes em paralelo não conversam entre si — cruzar 8 posições numa única ordem de prioridade não vira 8 pareceres paralelos costurados depois; a leitura e a pesquisa paralelizam, o julgamento sobre como elas se relacionam não.
 
-O grafo (mapa do caso) é sempre a etapa certa antes de redigir — isso não é "esforço extra", é o método. O que se calibra é só *quanto* delegar dentro dele.
+**Só a conversa principal toca o `segundo-cerebro`.** `pesquisador-juridico` e `leitor-de-autos` não têm acesso de leitura à pasta — eles verificam e devolvem o que encontram; quem lê o acervo antes de delegar e quem escreve nele depois (só com confirmação do usuário) é sempre a conversa principal, nunca um subagente isolado decidindo sozinho o que entra.
+
+O grafo (mapa do caso) é sempre a etapa certa antes de redigir — isso não é "esforço extra", é o método. O que se calibra é só *quanto* delegar dentro dele, depois de checar o que o segundo cérebro já resolve.
 
 ## Regras que valem em qualquer sessão, com ou sem skill ativa
 
