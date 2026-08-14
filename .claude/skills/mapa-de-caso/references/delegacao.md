@@ -6,9 +6,13 @@ Dispare todos os agentes **numa única mensagem, em paralelo**. São independent
 
 **Se os subagentes nomeados `pesquisador-juridico` e `leitor-de-autos` existirem** (`.claude/agents/`), use-os pelo nome — eles já têm a regra dura de citação e o escopo de ferramentas embutidos, então a delegação só precisa passar o concreto do caso (tese, dispositivo, documento), não reexplicar o método. Sem eles instalados, delegue a um agente genérico com as instruções completas de cada frente abaixo.
 
+Só a conversa principal lê e escreve em `~/segundo-cerebro/` — nenhum subagente tem essa tarefa. `pesquisador-juridico` nem tem ferramenta de arquivo (só JusRatio e web); verifica e devolve, não consulta o acervo por conta própria.
+
 ## Antes de tudo — já existe isso no segundo cérebro?
 
-Se a skill `segundo-cerebro` estiver instalada (`~/segundo-cerebro/`), consulte o `indice.md` de lá antes de delegar qualquer pesquisa. Tese com nota lá já tem precedentes verificados com data — reconfirme se estiver com mais de 6 meses, mas não pesquise do zero o que já foi verificado. Sem isso instalado, todas as frentes abaixo partem do zero.
+Se a skill `segundo-cerebro` estiver instalada (`~/segundo-cerebro/`) e você ainda não conferiu o `indice.md` dela na Etapa 0, consulte agora, antes de delegar. Tese com nota lá já tem precedentes verificados com data — reconfirme se estiver com mais de 6 meses, mas não pesquise do zero o que já foi verificado.
+
+Hoje o acervo só guarda nota de tese e de precedente (Frente 1 — jurisprudência). Para doutrina (Frente 3) e leitura de documento (Frente 4) a consulta raramente vai achar algo — não custa conferir, mas não espere cobertura. Sem `segundo-cerebro` instalado, todas as frentes abaixo partem do zero.
 
 ## Frente 1 — Jurisprudência (`pesquisador-juridico`, via JusRatio)
 

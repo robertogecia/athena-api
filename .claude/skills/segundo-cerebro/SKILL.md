@@ -140,5 +140,5 @@ Mesma regra do `mapa-de-caso`: nunca publique nota daqui como artifact ou págin
 ## Integração
 
 - **`mapa-de-caso`**: consulta este acervo na Etapa 4 (antes de delegar pesquisa) e oferece depositar na Etapa 6 (ao entregar). Ver `delegacao.md` da skill `mapa-de-caso` para o texto de referência.
-- **`pesquisador-juridico`**: é quem verifica o que entra aqui — a regra de citação dele (Etapa 5 do mapa) é a mesma regra deste arquivo.
+- **`pesquisador-juridico`**: é quem verifica o que entra aqui — a regra de citação dele (Etapa 4 do mapa, "Delegar a pesquisa") é a mesma regra deste arquivo. Ele não tem ferramenta de arquivo, então nunca lê nem escreve neste acervo diretamente — quem faz isso é sempre a conversa principal.
 - **`peticao-rg`**: não interage com o segundo cérebro; formata o documento final, que já não depende mais desta base.

@@ -52,6 +52,8 @@ Se um PDF for grande demais para ler direto, delegue a leitura a um subagente (E
 
 **Toda prova no mapa cita origem**: `PV3 · Contrato de empreitada · doc-02.pdf, fls. 12-18`. Prova sem localização é prova que você não vai achar na hora da audiência.
 
+5. **Se a skill `segundo-cerebro` estiver instalada, dê uma olhada no `indice.md` dela agora** — antes de inventariar os nós, não só na hora de delegar. Informa de cara se alguma tese do caso já está resolvida (nota com `verificado_em` dentro de 6 meses), o que muda quanto esforço o caso todo vai pedir. A Etapa 4 não precisa reconsultar o que já foi visto aqui — só delegar o que ficou de fora.
+
 ## Etapa 1 — Testar a via
 
 Antes de mapear, pergunte-se se o remédio pedido é o melhor para o cliente. Esta etapa existe porque é o erro mais caro e o mais fácil de não enxergar: um mapa impecável de uma estratégia errada continua sendo uma estratégia errada.
