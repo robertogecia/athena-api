@@ -4,6 +4,15 @@ Rode o bloco geral sempre, e o bloco da peça em questão. O que aparecer em fal
 
 Confira o texto vigente do dispositivo antes de aplicá-lo — esta lista é roteiro de conferência, não fonte.
 
+**Índice** — vá direto ao bloco que importa, não precisa ler os outros:
+
+- [Qualquer peça](#qualquer-peça) — roda sempre
+- [Petição inicial](#petição-inicial) — requisitos do art. 319, documentos, anti-inépcia
+- [Contestação](#contestação) — impugnação especificada, preliminares, agora-ou-nunca
+- [Réplica](#réplica)
+- [Recurso](#recurso)
+- [Onde as peças mais falham](#onde-as-peças-mais-falham) — erros recorrentes, fora do checklist formal
+
 ## Qualquer peça
 
 - [ ] Toda citação marcada como **verificada** ou **não verificada**; nenhuma entrega com item não verificado passando por certo

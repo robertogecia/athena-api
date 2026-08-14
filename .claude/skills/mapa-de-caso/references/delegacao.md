@@ -69,8 +69,9 @@ Muitos documentos, muitos réus, muitos pedidos: pergunte ao usuário se ele que
 
 ## Consolidando
 
-O que volta dos agentes entra no mapa sob a mesma regra de sempre:
+Agentes em paralelo não conversam entre si — cada um só enxerga o próprio pedaço. Isso é seguro quando a tarefa é checável rápido (achou o julgado certo? leu o PDF certo?) e perigoso quando a coerência entre as frentes importa e ninguém olhou o conjunto. Antes de consolidar, é você — não os agentes — quem cruza os resultados:
 
+- **Compare achados de frentes diferentes antes de virarem `PR` na mesma matriz.** Duas pesquisas sobre teses vizinhas podem trazer precedentes que se contradizem, ou um julgado que uma frente marcou como vigente e outra (ou a verificação de dispositivo) indica superado. Divergência entre agentes é sinal para checar, não para escolher o resultado que chegou primeiro.
 - julgado vira nó `PR` **só** com identificação completa e link;
 - o que não foi encontrado vira `[CARECE DE PRECEDENTE]`, não vira suposição;
 - fato novo que apareceu na leitura de documento entra como `F` (documento comprova); leitura interpretativa entra como `A`;
