@@ -27,13 +27,13 @@ Quatro peças que trabalham juntas, instaladas em `~/.claude/skills/` e `~/.clau
 
 ## Quanto de esforço usar em cada caso
 
-Não force multiagente/pipeline em todo caso — a maioria não precisa, e orquestração pesada sem necessidade só custa tempo e tokens. Escale de acordo com o que o caso realmente tem:
+Não force multiagente/pipeline em todo caso — a maioria não precisa, e orquestração pesada sem necessidade só custa tempo e tokens sem ganho. Escale de acordo com o que o caso realmente tem:
 
-| Tamanho do caso | O que usar |
-|---|---|
-| Poucos documentos, 1-2 teses | `mapa-de-caso` direto, sem delegar nada — cabe tudo numa análise só |
-| Pesquisa de jurisprudência, leitura de PDF pesado, mais de uma tese | `mapa-de-caso` delega aos subagentes nomeados (`pesquisador-juridico`, `leitor-de-autos`) em paralelo — é o caso comum |
-| Muitos documentos, muitos réus, muitos pedidos (≳10 frentes independentes) | aí sim vale perguntar se cabe um workflow de agentes maior — mas é exceção, não ponto de partida |
+- **1 fato, 1 prova, 1 pedido, sem documento pesado**: `mapa-de-caso` direto, sem delegar nada — cabe tudo numa análise só.
+- **2 ou mais teses, documento pesado (laudo, contrato longo), ou precisa de pesquisa de jurisprudência/doutrina**: `mapa-de-caso` delega aos subagentes nomeados (`pesquisador-juridico`, `leitor-de-autos`) em paralelo — é o caso comum.
+- **Muitas partes com posição própria a comparar** (litisconsórcio numeroso, concurso de credores em falência/recuperação/inventário) **ou muitos documentos**: aí sim vale perguntar se cabe um workflow de agentes maior para a etapa de leitura e pesquisa — o limiar exato de quando isso compensa está em `references/delegacao.md` do `mapa-de-caso`; não repito o número aqui para as duas referências não desalinharem com o tempo.
+
+**Mesmo delegando a coleta, a comparação final é sempre sua.** Agentes em paralelo não conversam entre si — cruzar 8 posições numa única ordem de prioridade não vira 8 pareceres paralelos costurados depois; a leitura e a pesquisa paralelizam, o julgamento sobre como elas se relacionam não.
 
 O grafo (mapa do caso) é sempre a etapa certa antes de redigir — isso não é "esforço extra", é o método. O que se calibra é só *quanto* delegar dentro dele.
 
