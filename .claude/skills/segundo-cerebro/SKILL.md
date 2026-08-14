@@ -52,9 +52,9 @@ Sempre que o `mapa-de-caso` for delegar uma pesquisa de jurisprudência (Frente 
 
 Isso substitui pesquisa nova por leitura de nota quando a nota já responde — e é o ganho real de manter isso: o segundo caso sobre a mesma tese começa rico, não do zero.
 
-## Depositar (depois de um caso encerrado)
+## Depositar
 
-Ao final de um caso — quando a peça foi protocolada e o desfecho é conhecido, ou pelo menos quando a tese foi de fato usada, não só cogitada — pergunte se o usuário quer guardar. Não decida sozinho o que entra; é filtro consciente, não arquivamento automático.
+O gatilho é **a tese foi de fato usada numa peça** — não precisa esperar o desfecho do processo para registrar (isso pode levar meses ou anos), mas também não guarde tese só cogitada e descartada. Pergunte se o usuário quer guardar; não decida sozinho o que entra — é filtro consciente, não arquivamento automático.
 
 **Precedente** (`precedentes/<slug>.md`):
 
@@ -79,6 +79,10 @@ teses: [inadimplemento-atraso-obra-cdc]
 [[2026-silva-x-banco]] — item 3.2, sustentou T1
 ```
 
+Autoridade, mesma escala do `pesquisador-juridico`/JusRatio — repetida aqui porque esta nota precisa fazer sentido sozinha, sem depender de nenhuma ferramenta estar conectada: **A** vinculante forte (Súmula Vinculante, ADI/ADC/ADPF, Súmula STF/STJ/TST/TSE) · **B** precedente qualificado (Tema Repetitivo, Repercussão Geral, IRDR/IAC) · **C** observância qualificada (Plenário/Corte Especial) · **D** orientativo (acórdão de turma comum, como a maioria) · **E** editorial (informativo).
+
+O trecho da ementa é **cópia do que foi lido** — nunca reconstrução de "o que provavelmente diz". Sem o texto em mãos, deixe em branco e marque `PENDENTE: abrir o acórdão antes de citar em peça` — vale para a ementa, para a `url`, e para qualquer outro campo que não foi de fato conferido. Nota incompleta e sinalizada é infinitamente melhor que nota completa e inventada.
+
 **Tese** (`teses/<slug>.md`):
 
 ```markdown
@@ -88,16 +92,31 @@ enunciado: "Em uma frase"
 autoridade_da_base: solida   # solida = 2+ precedentes independentes · isolada = 1 só · sem_apoio
 precedentes_favoraveis: [stj-resp-1234567-forca-maior]
 contra_teses: []
-placar: "1-0"
+resultado_em_juizo: "0 procedentes - 0 improcedentes"   # decisão de mérito real, não contagem de precedentes
 ultima_revisao: 2026-08-14
 ---
 ```
 
 `autoridade_da_base` só vira `solida` com **dois precedentes de julgamentos independentes** — duas citações do mesmo acórdão em fontes diferentes não contam como duas fontes. É a regra de maior impacto que o `claude-obsidian` valida: afirmação de risco (uma tese que vai sustentar um pedido de verdade) exige corroboração, não uma fonte só.
 
-**Caso** (`casos/<slug>.md`): três a cinco linhas — qual tese foi usada, o que o juízo decidiu, o que faria diferente. Não é o processo; é a lição.
+`resultado_em_juizo` conta **decisões de mérito reais** que aplicaram a tese, não quantos precedentes a sustentam — os dois números não têm relação nenhuma, e confundi-los é o erro mais fácil de cometer aqui. Tese nova começa em `0-0`; só muda quando um `casos/` associado a ela sair de `pendente`.
 
-Depois de qualquer depósito, **atualize `indice.md`** com a linha correspondente — nota sem entrada no índice é nota que ninguém vai achar.
+**Caso** (`casos/<slug>.md`):
+
+```markdown
+---
+tipo: caso
+data: 2026-08-14
+tese_usada: [inadimplemento-atraso-obra-cdc]
+resultado: pendente   # pendente · procedente · improcedente · acordo · outro
+---
+
+Três a cinco linhas: qual tese foi usada, o que o juízo decidiu (ou "ainda sem decisão"), o que faria diferente. Não é o processo; é a lição.
+```
+
+Se as partes não foram nomeadas na conversa, não invente — use um slug temático (`2026-atraso-obra-clausula-tolerancia`) em vez de um com nome de cliente. `resultado: pendente` é estado normal, não erro: quando o desfecho sair, volte nesta mesma nota, atualize `resultado` e, se mudou o placar da tese, atualize `resultado_em_juizo` na nota de tese correspondente.
+
+Depois de qualquer depósito — precedente, tese **ou** caso — **atualize `indice.md`** com a linha correspondente. Uma frase curta por entrada (até ~25 palavras): o índice só cumpre a função de evitar reler tudo se ele próprio ficar pequeno. Se um tipo de nota passar de umas 40-50 linhas no índice, considere um índice por pasta em vez de um só.
 
 ## Lint (sob pedido, não automático)
 
@@ -105,8 +124,8 @@ Quando o usuário pedir para conferir a base ("faz o lint do segundo cérebro", 
 
 1. Toda nota em `precedentes/` com `verificado_em` de mais de 6 meses → listar para reconfirmação.
 2. Toda `tese` cujos `precedentes_favoraveis` incluam um precedente marcado `status: superado` → rebaixar `autoridade_da_base` e sinalizar.
-3. Nota em `raw/`, `precedentes/` ou `teses/` sem entrada correspondente em `indice.md` → adicionar ou perguntar se deve ser removida.
-4. Teste dos 30 dias: nota em `teses/` ou `precedentes/` nunca referenciada por nenhum caso em `casos/` desde que foi criada → candidata a arquivar. Base que só cresce e nunca poda é a mesma que vira pasta morta.
+3. Nota em `raw/`, `precedentes/`, `teses/` **ou `casos/`** sem entrada correspondente em `indice.md` → adicionar ou perguntar se deve ser removida.
+4. Teste dos 30 dias: **a referência é transitiva** — um precedente conta como referenciado se a tese que ele sustenta (via `precedentes_favoraveis`) está associada a algum `casos/*.md` pelo campo `tese_usada`, mesmo que o `casos/` nunca cite o slug do precedente diretamente. Sem isso, todo precedente vira "órfão" mesmo sustentando ativamente a única tese em uso — o oposto do que este teste deveria pegar. Tese em `teses/` nunca associada a nenhum `casos/`, ou precedente cuja tese nunca foi usada, desde que criados → candidatos a arquivar. Base que só cresce e nunca poda é a mesma que vira pasta morta.
 
 Não rode isso sozinho a cada sessão — é comando do usuário, não hook automático (nada aqui executa sozinho; ver a ressalva de sigilo abaixo).
 
