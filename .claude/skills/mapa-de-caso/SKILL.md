@@ -50,6 +50,8 @@ O caso normalmente chega como pasta de arquivos, não como narrativa digitada. C
 
 Se um PDF for grande demais para ler direto, delegue a leitura a um subagente (Etapa 4) pedindo o resumo estruturado e as passagens literais que interessam, com página.
 
+Documento em DOCX, XLSX, PPTX, RTF ou EPUB, ou PDF que o `Read` não extrai limpo: se o CLI [`anydoc`](https://github.com/firecrawl/anydoc) estiver instalado, use-o (`Bash`) para converter em Markdown antes de ler — processa local, nada sai da máquina, e cobre formato que a leitura direta não pega. Sem ele, leia o que der e registre no índice o que não abriu.
+
 **Toda prova no mapa cita origem**: `PV3 · Contrato de empreitada · doc-02.pdf, fls. 12-18`. Prova sem localização é prova que você não vai achar na hora da audiência.
 
 5. **Se a skill `segundo-cerebro` estiver instalada, dê uma olhada no `indice.md` dela agora** — antes de inventariar os nós, não só na hora de delegar. Informa de cara se alguma tese do caso já está resolvida (nota com `verificado_em` dentro de 6 meses), o que muda quanto esforço o caso todo vai pedir. A Etapa 4 não precisa reconsultar o que já foi visto aqui — só delegar o que ficou de fora.
