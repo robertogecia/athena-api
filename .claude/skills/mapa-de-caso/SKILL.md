@@ -7,13 +7,15 @@ description: >-
   descoberto, fato não impugnado, contra-tese sem resposta, contradição de datas
   e preclusão iminente. Delega a subagentes em paralelo a pesquisa de
   jurisprudência (JusRatio), de precedente local (TJRO) e de doutrina na web.
-  Use SEMPRE antes de redigir peça (inicial, contestação, réplica, recurso,
-  parecer) quando o caso tiver mais de um fato, prova ou pedido — mesmo que o
-  pedido do usuário seja direto, do tipo redija a contestação, monte o mapa
-  primeiro e só então redija. Use também quando o usuário mandar analisar autos,
-  organizar caso, montar cronologia, avaliar viabilidade de ação ou achar o
-  ponto fraco de uma tese. Não use para formatar ou timbrar texto já pronto
-  (isso é peticao-rg) nem para revisar um trecho isolado.
+  Use SEMPRE antes de redigir peça contenciosa — inicial, contestação, réplica,
+  impugnação, parecer e recurso de qualquer tipo (apelação, agravo, embargos,
+  contrarrazões) — mesmo que o pedido do usuário seja direto, do tipo redija a
+  contestação: monte o mapa primeiro e só então redija. A única dispensa é o
+  caso manifestamente simples, de um fato, uma prova e um pedido. Use também
+  quando o usuário mandar analisar autos, organizar caso, montar cronologia,
+  avaliar viabilidade de ação ou achar o ponto fraco de uma tese. Não use para
+  formatar ou timbrar texto já pronto, nem para gerar o DOCX/PDF de peça já
+  redigida (isso é peticao-rg), nem para revisar um trecho isolado.
 ---
 
 # Mapa de Caso

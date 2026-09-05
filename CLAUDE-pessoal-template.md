@@ -10,7 +10,7 @@ cópia versionada do que te enviei, para não se perder.
 
 # Contexto pessoal — Roberto Grécia Advocacia
 
-OAB: [preencher] · Comarca(s) principal(is): [preencher — ex.: Porto Velho/RO]
+Roberto Grécia Bessa · OAB/RO 7865 · Comarca(s) principal(is): [preencher]
 
 ## Ecossistema de peças jurídicas
 
