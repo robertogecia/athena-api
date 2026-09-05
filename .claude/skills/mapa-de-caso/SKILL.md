@@ -1,21 +1,20 @@
 ---
 name: mapa-de-caso
 description: >-
-  Lê os autos (PDFs e documentos de uma pasta do caso), monta o mapa do caso — a
-  cadeia pedido ← tese ← fato ← prova, com partes, contra-teses e prazos — e
-  diagnostica as lacunas antes da redação — alegação sem prova, pedido
-  descoberto, fato não impugnado, contra-tese sem resposta, contradição de datas
-  e preclusão iminente. Delega a subagentes em paralelo a pesquisa de
-  jurisprudência (JusRatio), de precedente local (TJRO) e de doutrina na web.
-  Use SEMPRE antes de redigir peça contenciosa — inicial, contestação, réplica,
-  impugnação, parecer e recurso de qualquer tipo (apelação, agravo, embargos,
-  contrarrazões) — mesmo que o pedido do usuário seja direto, do tipo redija a
-  contestação: monte o mapa primeiro e só então redija. A única dispensa é o
-  caso manifestamente simples, de um fato, uma prova e um pedido. Use também
-  quando o usuário mandar analisar autos, organizar caso, montar cronologia,
-  avaliar viabilidade de ação ou achar o ponto fraco de uma tese. Não use para
-  formatar ou timbrar texto já pronto, nem para gerar o DOCX/PDF de peça já
-  redigida (isso é peticao-rg), nem para revisar um trecho isolado.
+  Lê os autos (PDFs de uma pasta do caso), monta o mapa do caso — a cadeia
+  pedido ← tese ← fato ← prova, com partes, contra-teses e prazos — e
+  diagnostica as lacunas antes da redação: alegação sem prova, pedido
+  descoberto, fato não impugnado, contradição de datas, preclusão iminente.
+  Delega a subagentes a pesquisa de jurisprudência (JusRatio), de precedente
+  local (TJRO) e de doutrina na web. Use SEMPRE antes de redigir peça
+  contenciosa — inicial, contestação, réplica, reconvenção, impugnação, parecer,
+  alegações finais e recurso de qualquer tipo (apelação, agravo, embargos);
+  lista exemplificativa, vale para qualquer peça que dependa de fato, prova e
+  tese — mesmo que o pedido seja direto, do tipo redija a contestação: monte o
+  mapa primeiro e só então redija. Use também para analisar autos, organizar
+  caso, montar cronologia ou achar o ponto fraco de uma tese. Não use para
+  formatar ou timbrar texto pronto, nem para gerar o DOCX/PDF de peça já
+  redigida (isso é peticao-rg), nem para revisar trecho isolado.
 ---
 
 # Mapa de Caso
@@ -35,6 +34,8 @@ O mapa é ferramenta interna. Ele não vai para os autos — ele decide o que va
 [ ] 5. Rodar o diagnóstico de lacunas
 [ ] 6. Entregar: matriz + cronologia + lacunas (+ diagrama se pedido)
 ```
+
+**Saída curta.** Se, ao abrir os autos, o caso tiver mesmo um fato, uma prova e um pedido — cobrança de título único, rito simples sem controvérsia fática —, não monte o aparato inteiro: entregue a matriz de amarração, o prazo e as lacunas em poucas linhas e siga para a redação. Isso se decide **depois** de ler, nunca antes: só olhando os autos dá para saber se o caso é simples, e é por isso que não é condição de gatilho da skill.
 
 Não pergunte antes de começar. Infira a peça e o polo do contexto e declare a premissa em uma linha no topo do mapa — *"Peça: contestação · Cliente no polo passivo · Juízo: 3ª Vara Cível de Porto Velho/TJRO — corrija se estiver errado"*. Só pergunte se peça e polo forem ambos indetermináveis.
 
