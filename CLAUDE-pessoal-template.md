@@ -25,6 +25,8 @@ Quatro peças que trabalham juntas, instaladas em `~/.claude/skills/` e `~/.clau
 
 **Se a pasta da sessão tem PDFs de autos (inicial, contrato, decisão, laudo) e não parece projeto de código, é provável que seja um caso** — considere `mapa-de-caso` mesmo que o pedido não use a palavra "mapa" (ex.: "organiza esse processo", "o que temos de prova aqui", "monta a contestação").
 
+**Ordem entre `mapa-de-caso` e `peticao-rg`**: as duas reivindicam "redija a contestação", então vale a regra explícita — o `mapa-de-caso` vem primeiro, sempre. A `peticao-rg` formata o que já foi decidido; não decide o que escrever. E não gere o documento final timbrado enquanto houver 🔴 aberto no mapa: peça bem diagramada em cima de lacuna não resolvida é pior que peça nenhuma, porque parece pronta para assinar.
+
 ## Quanto de esforço usar em cada caso
 
 Não force multiagente/pipeline em todo caso — a maioria não precisa, e orquestração pesada sem necessidade só custa tempo e tokens sem ganho.
