@@ -84,3 +84,25 @@ Agentes em paralelo não conversam entre si — cada um só enxerga o próprio p
 - o que não foi encontrado vira `[CARECE DE PRECEDENTE]`, não vira suposição;
 - fato novo que apareceu na leitura de documento entra como `F` (documento comprova); leitura interpretativa entra como `A`;
 - se um agente falhou ou a cota estourou, **registre isso no mapa** — pesquisa não feita não pode se parecer com pesquisa sem resultado.
+
+## Quando uma frente volta errada
+
+Uma frente voltou ruim — ementa genérica em vez de precedente aplicável, leitura que interpretou em vez de transcrever, cota estourada no meio. **Devolva só aquela frente.**
+
+Reabrir o lote inteiro é o erro caro aqui, e ele não parece erro: as outras três frentes voltavam certas, são refeitas, e a nova versão vem *diferente*, não melhor — porque não havia nada errado nelas. Agora você tem quatro resultados para reconferir e três que podem falhar desta vez por motivo novo. Uma falha virou quatro incertezas. Feito duas vezes na mesma análise, o mapa não fecha nunca.
+
+Visto de fora isso parece o agente falhando em série. Não é: é o caminho de volta destruindo trabalho que já estava bom.
+
+Cinco coisas viajam com a devolução, e cada uma faz um serviço:
+
+```
+UNIDADE     Frente 1 — tese da prescrição intercorrente
+VEREDITO    reprovado
+MOTIVO      trouxe ementa genérica, não precedente com o mesmo fato
+EVIDÊNCIA   os 3 acórdãos são de execução fiscal; nosso caso é execução de título extrajudicial
+ESCOPO      refaça só esta tese; não toque nas outras frentes nem no que já entrou no mapa
+```
+
+A linha do **escopo** parece burocracia e não é. Sem ela a frente devolvida cresce: o agente reabre a busca, encontra outra tese interessante de passagem, traz junto — e a sua correção de uma frente virou material novo que ninguém pediu e que entra no mapa sem conferência.
+
+**Pare na terceira tentativa.** Se a mesma frente falha três correções, o problema não está no agente: está na pergunta que você formulou — tese mal recortada, dispositivo errado, fato concreto que não é o que separa os precedentes. E o agente não enxerga a pergunta, só a resposta. Reformule a delegação, ou registre a tese como pendência de pesquisa no mapa e siga. Insistir uma quarta vez gasta cota e devolve a mesma coisa.

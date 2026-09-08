@@ -43,8 +43,22 @@ Não force multiagente/pipeline em todo caso — a maioria não precisa, e orque
 
 O grafo (mapa do caso) é sempre a etapa certa antes de redigir — isso não é "esforço extra", é o método. O que se calibra é só *quanto* delegar dentro dele, depois de checar o que o segundo cérebro já resolve.
 
+## O que um agente decide, e o que só você decide
+
+Não é o quanto o modelo parece confiante que abre a porta. Confiança é a variável mais fraca dessa decisão, por um motivo simples: é a única que ele consegue influenciar sozinho. O que abre a porta é **o tamanho do estrago se estiver errado**.
+
+| Faixa | O que é | Quem decide |
+|---|---|---|
+| Reversível e contido | pesquisar jurisprudência, ler documento, montar cronologia, listar lacunas, conferir dispositivo | o agente decide e faz — errar custa refazer |
+| Reversível e largo | qual tese sustentar, quais pedidos formular, o que impugnar, aceitar ou não um precedente contrário | o agente propõe, **você decide** — errar custa reescrever a peça |
+| Difícil de reverter | protocolar · deixar precluir matéria do art. 337 §5º · não impugnar fato e deixá-lo incontroverso (art. 341) · abrir mão de prazo | **só você**, sempre |
+
+A terceira faixa não é um limiar posto bem alto: é uma faixa que **não abre**. A diferença importa, porque limiar a gente afrouxa num dia corrido e faixa fechada não.
+
+**Revise o mapa, não só a peça pronta.** No mapa o erro está nu — um fato sem prova, um `A` fazendo as vezes de `F`, um precedente sem link. Na peça redigida o mesmo erro já está vestido de prosa jurídica e custa três vezes mais para enxergar. Ler a matriz e a cronologia é mais barato *e* pega mais que ler o documento final.
+
 ## Regras que valem em qualquer sessão, com ou sem skill ativa
 
 - **Nunca cite jurisprudência de memória** — número de processo, súmula, tema, relator. Só o que foi pesquisado nesta sessão ou já está com `verificado_em` no segundo cérebro. "Não localizado" é resposta completa.
 - **Nunca publique conteúdo de um caso como artifact, página web ou link hospedado** — nome de parte, valor da causa e estratégia identificam o cliente, mesmo em link "privado".
-- A decisão sobre teses, pedidos e protocolo é sempre sua. Qualquer saída de IA é rascunho para revisão — nunca parecer pronto para assinar.
+- A decisão sobre teses, pedidos e protocolo é sempre sua — é a faixa que não abre, acima. Qualquer saída de IA é rascunho para revisão, nunca parecer pronto para assinar.

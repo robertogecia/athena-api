@@ -23,6 +23,31 @@ Uma peça convence quando cada pedido desce, sem degrau quebrado, até uma prova
 
 O mapa é ferramenta interna. Ele não vai para os autos — ele decide o que vai.
 
+## O que reprova este mapa
+
+Antes do roteiro, a condição — porque conferência escrita depois do trabalho vira carimbo. Sem algo que possa **reprovar** o mapa enquanto ninguém está olhando, não existe conferência: existe roteiro.
+
+Estas seis reprovam, e nenhuma delas exige julgar mérito. São conferíveis olhando a estrutura:
+
+```
+REPROVA   F controvertido, de ônus do cliente, sem PV chegando nele
+REPROVA   PD cuja cadeia não desce até um PV
+REPROVA   T ou PD que depende de um nó A
+REPROVA   PR sem tribunal, órgão, relator, data, número e link
+REPROVA   matéria do art. 337 que preclui nesta peça e ficou sem decisão
+REPROVA   contradição de datas na narrativa do cliente
+```
+
+```
+NÃO REPROVA   "o mapa parece completo"
+NÃO REPROVA   "não encontrei problemas"
+NÃO REPROVA   nenhum erro apareceu na leitura
+```
+
+A última é a que pega gente cuidadosa: **ausência de erro não é prova de correção.** Quem não achou lacuna pode não ter procurado — e o custo do engano fica com o cliente, não com quem leu.
+
+O diagnóstico completo, com as oito lacunas e as severidades, está na Etapa 5. Isto aqui é a condição, e ela vem antes de propósito.
+
 ## Roteiro
 
 ```

@@ -120,12 +120,32 @@ Depois de qualquer depósito — precedente, tese **ou** caso — **atualize `in
 
 ## Lint (sob pedido, não automático)
 
-Quando o usuário pedir para conferir a base ("faz o lint do segundo cérebro", "confere se tá tudo em dia"):
+Quando o usuário pedir para conferir a base ("faz o lint do segundo cérebro", "confere se tá tudo em dia"), **rode o script** — não confira à mão:
 
-1. Toda nota em `precedentes/` com `verificado_em` de mais de 6 meses → listar para reconfirmação.
-2. Toda `tese` cujos `precedentes_favoraveis` incluam um precedente marcado `status: superado` → rebaixar `autoridade_da_base` e sinalizar.
-3. Nota em `raw/`, `precedentes/`, `teses/` **ou `casos/`** sem entrada correspondente em `indice.md` → adicionar ou perguntar se deve ser removida.
-4. Teste dos 30 dias: **a referência é transitiva** — um precedente conta como referenciado se a tese que ele sustenta (via `precedentes_favoraveis`) está associada a algum `casos/*.md` pelo campo `tese_usada`, mesmo que o `casos/` nunca cite o slug do precedente diretamente. Sem isso, todo precedente vira "órfão" mesmo sustentando ativamente a única tese em uso — o oposto do que este teste deveria pegar. Tese em `teses/` nunca associada a nenhum `casos/`, ou precedente cuja tese nunca foi usada, desde que criados → candidatos a arquivar. Base que só cresce e nunca poda é a mesma que vira pasta morta.
+```bash
+python3 scripts/lint.py
+```
+
+As regras não pedem julgamento nenhum: comparar datas, resolver referências, achar slug no índice, contar precedentes. Cada uma tem exatamente uma resposta certa. Conferir isso lendo arquivo é caro, lento e erra — sobretudo a regra 4, que é a mais fácil de aplicar errado de cabeça.
+
+O que o script confere:
+
+| Rótulo | Regra |
+|---|---|
+| `RECONFIRMAR` | precedente com `verificado_em` de mais de 6 meses — súmula cancelada e tema superado não avisam ninguém |
+| `REBAIXAR` | tese cujos `precedentes_favoraveis` incluem precedente `status: superado` |
+| `FORA-DO-INDICE` | nota em `raw/`, `precedentes/`, `teses/` ou `casos/` sem linha em `indice.md` |
+| `ARQUIVAR?` | teste dos 30 dias, com **referência transitiva**: um precedente conta como referenciado se a tese que ele sustenta está associada a algum `casos/` pelo campo `tese_usada`, mesmo que nenhum `casos/` cite o slug dele. Sem isso todo precedente vira "órfão" justamente enquanto sustenta a única tese em uso |
+| `BASE-FRACA` | `autoridade_da_base: solida` com menos de dois precedentes listados |
+| `REF-QUEBRADA` | `precedentes_favoraveis` ou `tese_usada` apontando para nota que não existe |
+| `PENDENTE` | marcador `PENDENTE` deixado na nota — campo não conferido, não citar em peça assim |
+| `MALFORMADO` | nota vazia, sem frontmatter, com frontmatter não fechado, ou precedente sem `verificado_em` legível |
+
+Saída: `0` nada a fazer · `1` há pendências · `2` há erro estrutural.
+
+**O que o script não confere, e você precisa saber que ele não confere:** se dois precedentes vêm de julgamentos de fato independentes (ele conta dois slugs, não sabe se são o mesmo acórdão citado em duas fontes), se a tese continua fazendo sentido, se o precedente é aplicável ao seu caso. Isso é leitura sua. O script derruba o trabalho mecânico para sobrar tempo justamente para essa parte.
+
+O script lê arquivos locais e escreve na tela. Sem rede, sem dependência externa, nada sai da máquina — o que importa, porque `raw/` pode ter trecho colado de autos.
 
 Não rode isso sozinho a cada sessão — é comando do usuário, não hook automático (nada aqui executa sozinho; ver a ressalva de sigilo abaixo).
 
