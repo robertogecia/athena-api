@@ -105,4 +105,8 @@ ESCOPO      refaça só esta tese; não toque nas outras frentes nem no que já 
 
 A linha do **escopo** parece burocracia e não é. Sem ela a frente devolvida cresce: o agente reabre a busca, encontra outra tese interessante de passagem, traz junto — e a sua correção de uma frente virou material novo que ninguém pediu e que entra no mapa sem conferência.
 
+**Ponha limite de tamanho na delegação, não só de assunto.** Pedido sem teto cresce sozinho: "cubra todas as hipóteses" e "uma por item" se multiplicam, e cada item costuma arrastar contexto próprio para fazer sentido. Diga quantos — quantos julgados, quantas páginas, quantas frentes — e o agente para onde você mandou parar. Sem teto, o custo não é proporcional à dificuldade da tarefa: é proporcional à imaginação de quem executa.
+
+**Confira quem está fora há tempo demais.** Se uma frente demora muito mais que as outras da mesma rodada, o problema quase nunca é a frente ser mais difícil — é o recorte dela estar aberto demais. Interrompa e reformule em vez de esperar; esperar não conserta briefing.
+
 **Pare na terceira tentativa.** Se a mesma frente falha três correções, o problema não está no agente: está na pergunta que você formulou — tese mal recortada, dispositivo errado, fato concreto que não é o que separa os precedentes. E o agente não enxerga a pergunta, só a resposta. Reformule a delegação, ou registre a tese como pendência de pesquisa no mapa e siga. Insistir uma quarta vez gasta cota e devolve a mesma coisa.
