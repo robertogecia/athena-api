@@ -138,10 +138,13 @@ O que o script confere:
 | `ARQUIVAR?` | teste dos 30 dias, com **referência transitiva**: um precedente conta como referenciado se a tese que ele sustenta está associada a algum `casos/` pelo campo `tese_usada`, mesmo que nenhum `casos/` cite o slug dele. Sem isso todo precedente vira "órfão" justamente enquanto sustenta a única tese em uso |
 | `BASE-FRACA` | `autoridade_da_base: solida` com menos de dois precedentes listados |
 | `REF-QUEBRADA` | `precedentes_favoraveis` ou `tese_usada` apontando para nota que não existe |
-| `PENDENTE` | marcador `PENDENTE` deixado na nota — campo não conferido, não citar em peça assim |
-| `MALFORMADO` | nota vazia, sem frontmatter, com frontmatter não fechado, ou precedente sem `verificado_em` legível |
+| `STATUS?` | `status` que não é nem vigente nem superado/cancelado/revogado — o lint não sabe se a tese apoiada nele deve cair |
+| `PENDENTE` | marcador `PENDENTE:` deixado na nota — campo não conferido, não citar em peça assim |
+| `MALFORMADO` | nota vazia, sem frontmatter, com frontmatter não fechado, lista aberta e não fechada, `verificado_em` ausente ou no futuro, `tipo:` divergente da pasta, ou dois arquivos com o mesmo slug (a referência fica ambígua) |
 
 Saída: `0` nada a fazer · `1` há pendências · `2` há erro estrutural.
+
+`raw/` é fonte bruta — acórdão colado, trecho de doutrina — e não tem frontmatter. Ela entra só na conferência de índice; nenhuma regra de schema se aplica a ela.
 
 **O que o script não confere, e você precisa saber que ele não confere:** se dois precedentes vêm de julgamentos de fato independentes (ele conta dois slugs, não sabe se são o mesmo acórdão citado em duas fontes), se a tese continua fazendo sentido, se o precedente é aplicável ao seu caso. Isso é leitura sua. O script derruba o trabalho mecânico para sobrar tempo justamente para essa parte.
 
