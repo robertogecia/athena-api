@@ -1,0 +1,17 @@
+# Um caso por linha: pasta | código de saída | rótulos esperados
+#
+# Cada caso é uma reprodução concreta de um defeito real que o lint teve, e
+# existe para impedir que ele volte. Os dois primeiros devem ficar LIMPOS —
+# são a conferência de falso positivo, e falso positivo é o que faz um lint
+# ser ignorado.
+transitivo-no-sentido-documentado|0|
+elo-declarado-so-no-precedente|0|
+pendente-nao-casa-em-independentemente|1|PENDENTE:1
+indice-casado-por-prefixo|1|FORA-DO-INDICE:1
+lista-em-bloco|2|REBAIXAR:1 REF-QUEBRADA:1
+data-futura-tipo-trocado-status-com-parentese|2|ARQUIVAR?:1 MALFORMADO:2 REBAIXAR:1
+bom-e-lista-inline-aberta|2|ARQUIVAR?:1 MALFORMADO:1 RECONFIRMAR:1
+indice-fora-de-utf8|2|FORA-DO-INDICE:1 MALFORMADO:1
+indice-e-slug-repetido|2|ARQUIVAR?:1 FORA-DO-INDICE:1 MALFORMADO:1 RECONFIRMAR:1
+slug-repetido-esconde-precedente-vencido|2|ARQUIVAR?:1 MALFORMADO:1 RECONFIRMAR:1
+nota-ilegivel-nao-e-referencia-quebrada|2|MALFORMADO:1

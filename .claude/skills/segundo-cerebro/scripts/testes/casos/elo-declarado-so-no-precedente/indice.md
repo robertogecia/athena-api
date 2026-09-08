@@ -1,0 +1,3 @@
+- teses/inadimplemento-atraso-obra-cdc
+- precedentes/stj-resp-1234567-forca-maior
+- casos/2026-silva-x-construtora

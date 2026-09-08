@@ -148,6 +148,14 @@ Saída: `0` nada a fazer · `1` há pendências · `2` há erro estrutural.
 
 **O que o script não confere, e você precisa saber que ele não confere:** se dois precedentes vêm de julgamentos de fato independentes (ele conta dois slugs, não sabe se são o mesmo acórdão citado em duas fontes), se a tese continua fazendo sentido, se o precedente é aplicável ao seu caso. Isso é leitura sua. O script derruba o trabalho mecânico para sobrar tempo justamente para essa parte.
 
+Se um dia mexer no script, rode antes a suíte de regressão:
+
+```bash
+python3 scripts/testes/rodar.py
+```
+
+São onze casos, cada um a reprodução de um defeito que o lint já teve — inclusive o pior deles, em que `PENDENTE` casava dentro de INDEPENDENTEMENTE e acusava de "não conferido" um precedente em ordem. Dois casos existem para ficar **limpos**: são a conferência de falso positivo, que é o que faz um lint ser ignorado.
+
 O script lê arquivos locais e escreve na tela. Sem rede, sem dependência externa, nada sai da máquina — o que importa, porque `raw/` pode ter trecho colado de autos.
 
 Não rode isso sozinho a cada sessão — é comando do usuário, não hook automático (nada aqui executa sozinho; ver a ressalva de sigilo abaixo).
