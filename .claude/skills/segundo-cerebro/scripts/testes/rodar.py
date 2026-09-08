@@ -43,6 +43,12 @@ def main():
             problemas.append(f"rótulos {obtido or '{}'}, esperava {esperado or '{}'}")
         if "Traceback" in proc.stderr:
             problemas.append("estourou: " + proc.stderr.strip().splitlines()[-1])
+        # caminho relatado tem de ser relativo à base — se escapar da pasta,
+        # o advogado não acha o arquivo que o achado aponta
+        fugitivos = [c for c in re.findall(r"^\[[A-Z?-]+\] (.+)$", proc.stdout,
+                                           re.MULTILINE) if c.startswith("..")]
+        if fugitivos:
+            problemas.append(f"caminho fora da base: {fugitivos[0]}")
 
         if problemas:
             falhas += 1

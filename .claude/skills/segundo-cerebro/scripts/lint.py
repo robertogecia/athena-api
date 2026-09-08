@@ -39,6 +39,17 @@ PASTAS = PASTAS_COM_FRONTMATTER + ("raw",)
 
 TIPO_DA_PASTA = {"precedentes": "precedente", "teses": "tese", "casos": "caso"}
 
+# Campos que o template da spec dá a cada tipo de nota. Faltar algum não é
+# erro por si: a spec sanciona a nota incompleta DESDE QUE sinalizada com
+# PENDENTE ("nota incompleta e sinalizada é infinitamente melhor que nota
+# completa e inventada"). O que não vale é o campo sumir calado.
+CAMPOS_DO_TEMPLATE = {
+    "precedente": ("tipo", "tribunal", "classe_numero", "autoridade",
+                   "verificado_em", "status", "url"),
+    "tese": ("tipo", "enunciado", "autoridade_da_base", "ultima_revisao"),
+    "caso": ("tipo", "data", "tese_usada", "resultado"),
+}
+
 # Súmula é cancelada, tema é superado, acórdão é revogado. Todas dizem a mesma
 # coisa para efeito de citar em peça: não cite.
 STATUS_MORTO = {"superado", "superada", "cancelado", "cancelada",
@@ -346,7 +357,18 @@ def confere(base, hoje):
         with open(caminho_indice, encoding="utf-8-sig") as fh:
             indexados = set()
             for linha in fh:
-                indexados.update(re.findall(r"[A-Za-z0-9][A-Za-z0-9._-]*", linha))
+                # O índice pode citar a nota de quatro jeitos: slug pelado,
+                # slug.md, pasta/slug ou pasta/slug.md. Todos valem.
+                for tok in re.findall(r"[A-Za-z0-9][A-Za-z0-9._/-]*", linha):
+                    tok = tok.strip("./")
+                    indexados.add(tok)
+                    # nome local distinto de 'base': reusar o nome do
+                    # parâmetro sobrescreve a pasta e quebra todo caminho
+                    # relatado depois daqui
+                    nome = tok.rsplit("/", 1)[-1]
+                    indexados.add(nome)
+                    if nome.endswith(".md"):
+                        indexados.add(nome[:-3])
     except OSError:
         if legiveis:
             anota("pendencia", "FORA-DO-INDICE", caminho_indice,
@@ -412,7 +434,22 @@ def confere(base, hoje):
                   f"autoridade_da_base: solida com {quantos} precedente(s) "
                   "listado(s) — solida exige dois julgamentos independentes")
 
-    # 6. marcadores PENDENTE deixados na nota
+    # 6. campo do template ausente e não sinalizado
+    for nota in sorted(legiveis, key=lambda n: n.caminho):
+        campos = CAMPOS_DO_TEMPLATE.get(TIPO_DA_PASTA.get(nota.pasta, ""), ())
+        if not campos:
+            continue
+        faltando = [c for c in campos
+                    if c not in nota.dados or nota.dados.get(c) in ("", [], None)]
+        if not faltando:
+            continue
+        if RE_PENDENTE.search(nota.texto()):
+            continue          # incompleta e sinalizada: é o estado sancionado
+        anota("pendencia", "CAMPO-FALTANDO", nota,
+              "sem " + ", ".join(faltando) + " e sem marcador PENDENTE: — "
+              "campo em branco calado vira citação inventada depois")
+
+    # 7. marcadores PENDENTE deixados na nota
     for nota in sorted(legiveis, key=lambda n: n.caminho):
         if RE_PENDENTE.search(nota.texto()):
             anota("pendencia", "PENDENTE", nota,
