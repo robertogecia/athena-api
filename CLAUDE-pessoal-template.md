@@ -31,6 +31,8 @@ Quatro peças que trabalham juntas, instaladas em `~/.claude/skills/` e `~/.clau
 
 Não force multiagente/pipeline em todo caso — a maioria não precisa, e orquestração pesada sem necessidade só custa tempo e tokens sem ganho.
 
+**Economize na coleta, nunca na conferência.** A assimetria decide tudo: token gasto à toa se perde uma vez; verificação pulada se perde o caso. Então corte a frente que não precisava existir — tese que o segundo cérebro já responde, delegação num caso de um fato só, segunda busca por capricho. Nunca corte a verificação do precedente, o mapa, nem o portão antes do documento final. E não corte instrução para poupar contexto: o texto das skills é ruído perto do que uma frente de pesquisa devolve.
+
 **Antes de contar teses e documentos para decidir a escala, consulte o `segundo-cerebro`.** Ele existe para encolher essa conta: tese com nota lá, `verificado_em` dentro de 6 meses, não entra como "precisa de pesquisa" — já está resolvida, só falta ler. Só depois de descontar o que o acervo já responde, escale pelo que sobrou:
 
 - **1 fato, 1 prova, 1 pedido, sem documento pesado e sem pesquisa pendente**: `mapa-de-caso` direto, sem delegar nada — cabe tudo numa análise só.

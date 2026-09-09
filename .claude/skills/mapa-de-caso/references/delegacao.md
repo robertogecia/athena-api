@@ -16,7 +16,10 @@ Os subagentes nomeados já declaram `model: sonnet` no próprio arquivo. Sem ess
 |---|---|---|
 | **Sonnet** | as cinco frentes abaixo — pesquisar tese concreta, ler documento, conferir dispositivo | Trabalho delimitado, com pergunta já formulada e formato de resposta definido. É o padrão |
 | **Opus** | a conversa principal, que consolida — e qualquer agente cuja tarefa seja **achar o que está errado** | Divergência sutil entre o que foi pedido e o que voltou é onde modelo mais fraco concorda com o que lê. Este é o portão; não economize nele |
-| **Haiku** | quase nunca | Se a tarefa é mecânica a esse ponto, pergunte antes se não é `grep`, script ou uma leitura sua de dois minutos |
+| **Haiku** | quase nunca | Tem **200K de contexto, um quinto dos outros** — laudo extenso ou processo inteiro não cabe, e é o que a Frente 4 existe para ler. Some-se a isso: se a tarefa é mecânica a esse ponto, pergunte antes se não é `grep` ou script |
+| **Fable** | por ora, não | Custa **o dobro do Opus** e não há nenhuma medição dele neste trabalho. Se um dia couber, é numa consolidação única de caso de valor alto — nunca nas frentes, que é onde está o volume |
+
+Ordem de grandeza por milhão de tokens (entrada / saída), para calibrar: Fable $10/$50 · Opus $5/$25 · Sonnet $2/$10 · Haiku $1/$5. Na assinatura você não paga por token, mas a razão vale igual — é a velocidade com que o limite de uso queima.
 
 **O modelo barato não segura o custo — o recorte segura.** Medido: uma frente de geração em Sonnet, com pedido sem teto, custou 1,6× mais tokens e 2,9× mais tempo que uma conferência adversarial em Opus, que era a tarefa difícil. Delegar em modelo menor sem limitar o tamanho do pedido não economiza nada.
 
@@ -25,6 +28,30 @@ Os subagentes nomeados já declaram `model: sonnet` no próprio arquivo. Sem ess
 Se a skill `segundo-cerebro` estiver instalada (`~/segundo-cerebro/`) e você ainda não conferiu o `indice.md` dela na Etapa 0, consulte agora, antes de delegar. Tese com nota lá já tem precedentes verificados com data — reconfirme se estiver com mais de 6 meses, mas não pesquise do zero o que já foi verificado.
 
 Hoje o acervo só guarda nota de tese e de precedente (Frente 1 — jurisprudência). Para doutrina (Frente 3) e leitura de documento (Frente 4) a consulta raramente vai achar algo — não custa conferir, mas não espere cobertura. Sem `segundo-cerebro` instalado, todas as frentes abaixo partem do zero.
+
+## Onde o custo está de verdade
+
+Antes de economizar no lugar errado: as skills e este arquivo somam alguns milhares de palavras por caso. **Uma frente de pesquisa que volta com trinta acórdãos e trechos literais custa várias vezes isso. Ler um laudo de duzentas páginas custa uma ordem de grandeza a mais.** O texto das instruções é ruído no orçamento; a delegação é o orçamento.
+
+Então não corte instrução para poupar token — corte **frente que não precisava existir**.
+
+| Corte à vontade | Nunca corte |
+|---|---|
+| Tese que o segundo cérebro já responde com `verificado_em` dentro de 6 meses | Verificar precedente antes de citar. Julgado não conferido não entra, e ponto |
+| Delegar num caso de um fato, uma prova, um pedido — a saída curta existe para isso | O mapa. Ele não é esforço extra, é o método |
+| Diagrama Mermaid, que já é opcional | O portão antes de gerar o documento final |
+| Segunda busca "para confirmar" quando a primeira foi ampla e clara | Leitura literal do documento que sustenta fato controvertido |
+| Reler documento que uma frente já leu e transcreveu | Registrar pesquisa que falhou — pesquisa não feita não pode parecer pesquisa sem resultado |
+
+A assimetria é o que decide: **token gasto à toa você perde uma vez; verificação pulada você perde o caso.** Por isso a economia é sempre na coleta, nunca na conferência.
+
+## Tempo
+
+Tempo aqui não é o modelo pensando — é frente mal recortada. As três coisas que mais custam relógio, medidas e não supostas:
+
+1. **Frentes disparadas em série.** São independentes: uma mensagem só, todas juntas. Rodar em fila multiplica a espera pelo número de frentes sem melhorar nada.
+2. **Pedido sem teto**, que é o campeão. Uma frente com recorte aberto demais consumiu quase o triplo do tempo de uma conferência adversarial que era a tarefa mais difícil da rodada.
+3. **Esperar em vez de reformular.** Frente muito mais lenta que as irmãs não está achando mais coisa — está sem limite. Interrompa.
 
 ## Frente 1 — Jurisprudência (`pesquisador-juridico`, via JusRatio)
 
@@ -50,7 +77,7 @@ Instruções operacionais para o agente:
 
 Quando o caso corre ou vai correr no TJRO, o entendimento da câmara que vai julgar pesa mais que o de tribunal distante. Vale também mapear o relator, se já sorteado.
 
-- Use o **MCP do TJRO** se estiver disponível na sessão.
+- Use o **MCP do TJRO** se estiver disponível na sessão. **Hoje ele não está instalado** — confira a lista de ferramentas antes de contar com ele, e não o mencione ao usuário como se existisse.
 - Se não estiver, use o JusRatio com `tribunais: ["TJRO"]`.
 - **Diga no mapa qual via foi usada** — a cobertura das duas é diferente, e o advogado precisa saber se a busca local foi rasa.
 
