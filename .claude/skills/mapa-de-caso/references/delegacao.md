@@ -141,6 +141,22 @@ Agentes em paralelo não conversam entre si — cada um só enxerga o próprio p
 
 **Se for delegar a conferência de uma frente, dê a ela os autos, não o relatório da primeira.** Um agente que confere lendo o resumo de quem pesquisou herda o enquadramento junto: ele valida a moldura em vez de testá-la, e devolve concordância que parece verificação. Passe a tese, o fato concreto e o documento — as mesmas coisas que a primeira frente recebeu — e compare as duas respostas você. Duas leituras independentes que batem valem alguma coisa; uma leitura e o eco dela não valem nada.
 
+### Isso resolve metade do problema
+
+A outra metade: se quem produziu e quem confere leram a **mesma especificação ambígua** e resolveram a ambiguidade do mesmo jeito, a conferência concorda por motivo nenhum — não porque o trabalho está certo, mas porque os dois vieram da mesma cabeça. Dar os autos em vez do relatório não protege contra isso.
+
+Foi o que aconteceu ao corrigir o lint do segundo cérebro nesta sessão. Um agente auditou o código contra a especificação e achou quinze defeitos reais — mas não podia achar que minha implementação e meus próprios casos de teste liam um detalhe não especificado (o formato de citação no índice) do mesmo jeito, porque os dois vieram de mim. Só apareceu quando um segundo agente, **sem nunca ver o código**, construiu sua própria versão a partir só da especificação — e a leitura dele divergiu da minha.
+
+Duas técnicas, dois alvos diferentes:
+
+| Técnica | Acha | Não acha |
+|---|---|---|
+| **Auditoria** — lê a especificação e o que já foi produzido, procura onde quebra | erro de implementação: comparação invertida, campo nunca lido, regra ao contrário | suposição que quem audita compartilha com quem produziu, por terem lido o mesmo texto ambíguo |
+| **Produção paralela independente** — lê só a especificação, nunca o que já foi produzido, monta a própria versão do zero | suposição não escrita — a segunda versão resolve a ambiguidade sem saber como a primeira resolveu | é mais lenta e mais cara; não vale para todo caso |
+
+**No mapa isso já existe, em forma jurídica: é o nó `CT`.** Contra-tese vale mais construída a partir dos fatos crus do que como resposta à tese já escrita — é por isso que a Frente 1 pede "a contra-tese que se espera" junto da pesquisa favorável, não depois dela. Para tese estruturante, onde o resultado do caso pode depender de qual leitura dos fatos prevalece, considere uma frente que recebe só os fatos, sem ver a tese do cliente, para construir a contra-tese — mais caro, e por isso reservado ao que a palavra "estruturante" já filtra no início da Frente 1.
+
+
 ## Quando uma frente volta errada
 
 Uma frente voltou ruim — ementa genérica em vez de precedente aplicável, leitura que interpretou em vez de transcrever, cota estourada no meio. **Devolva só aquela frente.**
