@@ -19,6 +19,19 @@ Os subagentes nomeados já declaram `model: sonnet` no próprio arquivo. Sem ess
 | **Haiku** | quase nunca | Tem **200K de contexto, um quinto dos outros** — laudo extenso ou processo inteiro não cabe, e é o que a Frente 4 existe para ler. Some-se a isso: se a tarefa é mecânica a esse ponto, pergunte antes se não é `grep` ou script |
 | **Fable** | por ora, não | Custa **o dobro do Opus** e não há nenhuma medição dele neste trabalho. Se um dia couber, é numa consolidação única de caso de valor alto — nunca nas frentes, que é onde está o volume |
 
+### O segundo eixo: `effort`
+
+Modelo é só metade do ajuste. O frontmatter do subagente aceita também `effort` (`low` · `medium` · `high` · `xhigh` · `max`), que sobrescreve o nível da sessão enquanto aquele agente roda e controla profundidade de raciocínio e gasto. Sem a linha, o subagente **herda o da sessão** — rodar o mapa em `high` põe as cinco frentes em `high` junto.
+
+Os dois agentes nomeados vêm com `effort: medium`. É um degrau abaixo do padrão, nos nós de maior volume, sem cair para `low` em tarefa que ainda exige julgar autoridade de precedente e enxergar o que um documento não diz. **É escolha fundamentada, não medida** — se numa peça real a pesquisa vier rasa, suba para `high` antes de culpar o modelo.
+
+### Alavancas que existem e que eu deliberadamente não puxei
+
+O frontmatter aceita mais coisa. Duas ficaram de fora, com motivo, para ninguém precisar redecidir isso do zero:
+
+- **`maxTurns`** — teto de turnos, com retorno marcado como parcial e retomável. Tentador depois de uma frente que rodou solta, mas qualquer número que eu escolhesse hoje seria arbitrário: não tenho a distribuição de turnos destes agentes, e um teto baixo demais custa uma retomada em todo caso grande. O que resolveu a frente solta foi pôr teto **no pedido**, não no turno.
+- **`experimental.cacheTtl`** — vida do cache de prompt. As frentes disparam em paralelo, numa mensagem só, com prompts diferentes: não há prefixo comum para reaproveitar entre elas. Não paga o próprio complicador.
+
 Ordem de grandeza por milhão de tokens (entrada / saída), para calibrar: Fable $10/$50 · Opus $5/$25 · Sonnet $2/$10 · Haiku $1/$5. Na assinatura você não paga por token, mas a razão vale igual — é a velocidade com que o limite de uso queima.
 
 **O modelo barato não segura o custo — o recorte segura.** Medido: uma frente de geração em Sonnet, com pedido sem teto, custou 1,6× mais tokens e 2,9× mais tempo que uma conferência adversarial em Opus, que era a tarefa difícil. Delegar em modelo menor sem limitar o tamanho do pedido não economiza nada.
