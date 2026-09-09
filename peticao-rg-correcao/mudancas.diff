@@ -1,0 +1,107 @@
+--- peticao-rg-ORIGINAL.md	2026-09-05 19:39:32.987368590 +0000
++++ peticao-rg-SKILL.md	2026-09-05 20:20:33.654040791 +0000
+@@ -1,15 +1,21 @@
+ ---
+ name: peticao-rg
+ description: >-
+-  Gera petições e peças jurídicas em DOCX/PDF com o papel timbrado e a
+-  formatação padrão do escritório Roberto Grécia (logo no cabeçalho da 1ª
+-  página, rodapé azul com contatos, numeração de páginas, Segoe UI 11pt
+-  justificado, assinatura manuscrita). Use SEMPRE que o usuário pedir para
+-  redigir, elaborar, formatar ou "passar a limpo" qualquer peça processual ou
+-  documento do escritório — contestação, petição inicial, réplica, recurso,
+-  agravo, embargos, parecer, notificação extrajudicial, procuração, contrato —
+-  ou quando pedir um DOCX/PDF "timbrado", "no modelo do escritório", "com a
+-  formatação padrão", mesmo sem citar a palavra "petição".
++  Gera o documento final em DOCX/PDF com o papel timbrado e a formatação
++  padrão do escritório Roberto Grécia (logo no cabeçalho da 1ª página,
++  rodapé azul com contatos, numeração de páginas, Segoe UI 11pt justificado,
++  assinatura manuscrita). Use quando o pedido for produzir ou formatar o
++  documento em si — "passar a limpo", "timbrado", "no modelo do escritório",
++  "com a formatação padrão", ou gerar o DOCX/PDF de texto já redigido, mesmo
++  sem citar a palavra "petição". Use direto para o que não depende de
++  análise de autos: procuração, substabelecimento, contrato, notificação
++  extrajudicial, declaração, ofício e demais peças de mero expediente
++  (juntada, habilitação). Para peça contenciosa de um caso com autos ou
++  documentos (inicial, contestação, réplica, recurso, agravo, embargos,
++  parecer) ainda não redigida, o mapa-de-caso vem primeiro e decide o
++  conteúdo — esta skill entra depois, partindo do mapa. Se o texto já
++  estiver redigido, entra sozinha; "gera o DOCX timbrado" de peça ainda não
++  escrita não dispensa o mapa.
+ ---
+ 
+ # Petição no modelo Roberto Grécia
+@@ -24,9 +30,22 @@
+ 
+ ## Fluxo
+ 
+-1. Redija o conteúdo da peça (o mérito jurídico é seu trabalho normal;
+-   esta skill cuida só da forma).
++0. **É peça contenciosa? Procure o mapa antes de escrever qualquer linha.**
++   Inicial, contestação, réplica, reconvenção, impugnação, recurso, parecer e
++   afins: dê um `ls` na pasta do caso atrás do mapa do `mapa-de-caso`
++   (`mapa-do-caso.md`, `mapa*.md`) e leia a seção "Quando vem de um mapa de
++   caso" antes de continuar — vale mesmo que o pedido tenha chegado como
++   "gera o DOCX timbrado". **Não achou mapa? Pergunte**: "não localizei mapa
++   deste caso — quer que eu rode o `mapa-de-caso` primeiro, ou redijo
++   direto?". Nunca leia "não achei" como autorização para redigir do zero —
++   é exatamente aí que sai peça bonita e sem lastro. Documento que não é peça
++   contenciosa (procuração, contrato, notificação, mero expediente) pula
++   direto para o passo 1.
++1. Redija o conteúdo da peça — a partir do mapa, se houver (o mérito jurídico
++   é seu trabalho normal; esta skill cuida da forma).
+ 2. Monte um JSON de blocos (formato abaixo) e salve em arquivo temporário.
++   **Veio de mapa? Antes de montar o JSON**, confirme que nenhum item 🔴, ⏰,
++   🟡 ou `[CARECE DE PRECEDENTE]` ficou sem decisão do advogado.
+ 3. Gere o DOCX:
+    ```bash
+    python3 <skill>/scripts/build_docx.py entrada.json
+@@ -48,6 +67,48 @@
+ extenso e legível (não abreviado), e o primeiro nome (ou nome usual) do
+ cliente, como o usuário já se refere a ele na conversa.
+ 
++## Quando vem de um mapa de caso
++
++Se a skill `mapa-de-caso` rodou antes (mapa salvo na pasta do caso ou montado
++na conversa), ele é a fonte do conteúdo — não reescreva do zero:
++
++- **Dos Fatos** sai da cronologia do mapa, na ordem das datas, cada fato com a
++  prova citada por arquivo e folhas.
++- **Do Direito** sai da matriz de amarração: um bloco por pedido, subindo tese
++  → fato → prova → precedente verificado.
++- **Pedidos** saem dos nós `PD`, na ordem de dependência lógica.
++
++**PARE antes de gerar se o mapa deixou qualquer coisa para resolver antes do
++protocolo** — não só o que está marcado 🔴, mas também prazo e preclusão (⏰),
++tese em 🟡 que dependa de decisão sua, e `[CARECE DE PRECEDENTE]` em aberto. Diga quais são, explique o que cada uma muda no
++documento, e pergunte antes de montar o JSON. Não é formalidade: uma reconvenção
++que precluiu, ou uma peça que alega vício oculto e avaria aparente ao mesmo
++tempo, custa o caso — e o DOCX timbrado sai igualmente bonito nos dois casos.
++
++Liste **item a item**, cada um com o que muda no documento, e colha a resposta
++do advogado **por item** — um "pode gerar" global não é decisão informada, é o
++portão sendo cumprido por fora.
++
++Se ele mandar gerar assim mesmo, **gere — e deixe a pendência visível no
++documento entregue**, não só na conversa: o trecho afetado sai marcado (ex.:
++"[PENDENTE: confirmar se a avaria era aparente]") e você repete a lista na
++mensagem de entrega, dizendo que o arquivo não é versão de protocolo.
++
++**Pendência de prazo não se resolve com marcador.** Um "[PENDENTE]" dentro da
++contestação não preserva uma reconvenção que tinha de ser oferecida no mesmo
++ato, nem uma preliminar que precluiu — o documento sai marcado e o direito
++morre igual. Para item ⏰ só existem duas saídas: redigir agora o que precisa
++ser apresentado junto, ou o advogado dizer, por escrito, que está abrindo mão.
++Não ofereça a terceira.
++
++Tese que o mapa marcou como pendente de pesquisa entra na peça marcada como
++pendente, ou não entra. Nunca preencha o "Do Direito" com jurisprudência
++lembrada de memória: número de processo, súmula ou tema só entram se vieram de
++pesquisa desta sessão. Quando a matriz vier com `[CARECE DE PRECEDENTE]`, há
++duas saídas legítimas e nenhuma terceira: rodar a pesquisa antes de redigir, ou
++redigir sobre lei e doutrina declarando a jurisprudência pendente — ofereça as
++duas ao advogado.
++
+ ## Formato do JSON
+ 
+ ```json

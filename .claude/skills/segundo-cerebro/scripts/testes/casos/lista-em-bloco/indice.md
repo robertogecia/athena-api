@@ -1,0 +1,4 @@
+- teses/atraso-obra
+- precedentes/stj-resp-111-cdc
+- precedentes/stj-resp-222-cdc
+- casos/2026-caso-x
