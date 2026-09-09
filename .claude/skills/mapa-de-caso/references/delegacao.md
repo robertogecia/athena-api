@@ -76,7 +76,7 @@ O que a delegação precisa conter:
 - o **fato concreto** a que ela se aplica (é o que separa precedente aplicável de ementa genérica)
 - a **contra-tese** que se espera — precedente contrário achado agora vale mais que surpresa na réplica
 - o **tribunal de interesse**, quando houver
-- instrução de devolver, para cada julgado: tribunal, órgão julgador, relator, data, número do processo, link e o trecho literal que interessa
+- instrução de devolver, para cada julgado, a **ficha de precedente** no formato do próprio agente (tribunal, órgão e relator lidos do texto, data de julgamento, número, id do documento, link, dispositivo/tese/trecho literais, `verificacao`) — é a ficha que entra em `precedentes` do JSON da `peticao-rg` (lint do build) e que o `segundo-cerebro` deposita; e, quando um número devolver mais de uma decisão, a lista de todas com data e resultado, dizendo qual é a da ficha
 
 Instruções operacionais para o agente:
 
@@ -90,7 +90,7 @@ Instruções operacionais para o agente:
 
 Quando o caso corre ou vai correr no TJRO, o entendimento da câmara que vai julgar pesa mais que o de tribunal distante. Vale também mapear o relator, se já sorteado.
 
-- Use o **MCP do TJRO** se estiver disponível na sessão. **Hoje ele não está instalado** — confira a lista de ferramentas antes de contar com ele, e não o mencione ao usuário como se existisse.
+- Use o **MCP do TJRO** se estiver disponível na sessão (confira a lista de ferramentas — o nome pode mudar entre máquinas/reconexões).
 - Se não estiver, use o JusRatio com `tribunais: ["TJRO"]`.
 - **Diga no mapa qual via foi usada** — a cobertura das duas é diferente, e o advogado precisa saber se a busca local foi rasa.
 
