@@ -37,6 +37,8 @@ Não force multiagente/pipeline em todo caso — a maioria não precisa, e orque
 - **2 ou mais teses ainda sem nota verificada no segundo cérebro, documento pesado (laudo, contrato longo), ou precisa de pesquisa de jurisprudência/doutrina**: `mapa-de-caso` delega aos subagentes nomeados (`pesquisador-juridico`, `leitor-de-autos`) em paralelo — é o caso comum.
 - **Muitas partes com posição própria a comparar** (litisconsórcio numeroso, concurso de credores em falência/recuperação/inventário) **ou muitos documentos**: aí sim vale perguntar se cabe um workflow de agentes maior para a etapa de leitura e pesquisa — o limiar exato de quando isso compensa está em `references/delegacao.md` do `mapa-de-caso`; não repito o número aqui para as duas referências não desalinharem com o tempo.
 
+**Qual modelo em cada agente** está em `references/delegacao.md` — resumo: Sonnet nas frentes de pesquisa e leitura (os subagentes já vêm com isso no arquivo), Opus em quem consolida e em quem confere, Haiku quase nunca. E o recorte segura o custo mais que o modelo.
+
 **Mesmo delegando a coleta, a comparação final é sempre sua.** Agentes em paralelo não conversam entre si — cruzar 8 posições numa única ordem de prioridade não vira 8 pareceres paralelos costurados depois; a leitura e a pesquisa paralelizam, o julgamento sobre como elas se relacionam não.
 
 **Só a conversa principal toca o `segundo-cerebro`.** `pesquisador-juridico` e `leitor-de-autos` não têm acesso de leitura à pasta — eles verificam e devolvem o que encontram; quem lê o acervo antes de delegar e quem escreve nele depois (só com confirmação do usuário) é sempre a conversa principal, nunca um subagente isolado decidindo sozinho o que entra.

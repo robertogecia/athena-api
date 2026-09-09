@@ -8,6 +8,18 @@ Dispare todos os agentes **numa única mensagem, em paralelo**. São independent
 
 Só a conversa principal lê e escreve em `~/segundo-cerebro/` — nenhum subagente tem essa tarefa. `pesquisador-juridico` nem tem ferramenta de arquivo (só JusRatio e web); verifica e devolve, não consulta o acervo por conta própria.
 
+## Que modelo em cada nó
+
+Os subagentes nomeados já declaram `model: sonnet` no próprio arquivo. Sem essa linha eles herdariam o modelo da conversa — e quatro agentes de pesquisa rodariam no modelo mais caro fazendo trabalho delimitado.
+
+| Modelo | Onde | Por quê |
+|---|---|---|
+| **Sonnet** | as cinco frentes abaixo — pesquisar tese concreta, ler documento, conferir dispositivo | Trabalho delimitado, com pergunta já formulada e formato de resposta definido. É o padrão |
+| **Opus** | a conversa principal, que consolida — e qualquer agente cuja tarefa seja **achar o que está errado** | Divergência sutil entre o que foi pedido e o que voltou é onde modelo mais fraco concorda com o que lê. Este é o portão; não economize nele |
+| **Haiku** | quase nunca | Se a tarefa é mecânica a esse ponto, pergunte antes se não é `grep`, script ou uma leitura sua de dois minutos |
+
+**O modelo barato não segura o custo — o recorte segura.** Medido: uma frente de geração em Sonnet, com pedido sem teto, custou 1,6× mais tokens e 2,9× mais tempo que uma conferência adversarial em Opus, que era a tarefa difícil. Delegar em modelo menor sem limitar o tamanho do pedido não economiza nada.
+
 ## Antes de tudo — já existe isso no segundo cérebro?
 
 Se a skill `segundo-cerebro` estiver instalada (`~/segundo-cerebro/`) e você ainda não conferiu o `indice.md` dela na Etapa 0, consulte agora, antes de delegar. Tese com nota lá já tem precedentes verificados com data — reconfirme se estiver com mais de 6 meses, mas não pesquise do zero o que já foi verificado.
@@ -75,6 +87,8 @@ Artigo citado de cabeça é a alucinação mais discreta: o número está certo,
 
 Muitos documentos, muitos réus, muitos pedidos: pergunte ao usuário se ele quer rodar um **workflow de agentes** — leitura em paralelo de todos os documentos, depois pesquisa por tese, depois consolidação. Vale a pena a partir de umas dez frentes independentes; abaixo disso, subagentes em paralelo já dão conta e custam menos.
 
+Antes de disparar um workflow, escreva **o que reprova cada etapa** — e escreva de um jeito que dê para conferir sem julgar mérito: "todo julgado devolvido tem número, órgão, data e link", "toda passagem citada tem número de página", "nenhum fato entrou sem documento". Etapa que não pode reprovar não é etapa de pipeline: é fila. E o problema de rodar dez frentes sem isso não é o custo — é que o erro de uma delas chega ao mapa parecendo resultado.
+
 ## Consolidando
 
 Agentes em paralelo não conversam entre si — cada um só enxerga o próprio pedaço. Isso é seguro quando a tarefa é checável rápido (achou o julgado certo? leu o PDF certo?) e perigoso quando a coerência entre as frentes importa e ninguém olhou o conjunto. Antes de consolidar, é você — não os agentes — quem cruza os resultados:
@@ -84,6 +98,8 @@ Agentes em paralelo não conversam entre si — cada um só enxerga o próprio p
 - o que não foi encontrado vira `[CARECE DE PRECEDENTE]`, não vira suposição;
 - fato novo que apareceu na leitura de documento entra como `F` (documento comprova); leitura interpretativa entra como `A`;
 - se um agente falhou ou a cota estourou, **registre isso no mapa** — pesquisa não feita não pode se parecer com pesquisa sem resultado.
+
+**Se for delegar a conferência de uma frente, dê a ela os autos, não o relatório da primeira.** Um agente que confere lendo o resumo de quem pesquisou herda o enquadramento junto: ele valida a moldura em vez de testá-la, e devolve concordância que parece verificação. Passe a tese, o fato concreto e o documento — as mesmas coisas que a primeira frente recebeu — e compare as duas respostas você. Duas leituras independentes que batem valem alguma coisa; uma leitura e o eco dela não valem nada.
 
 ## Quando uma frente volta errada
 
