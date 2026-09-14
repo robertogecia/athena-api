@@ -25,6 +25,14 @@ Modelo é só metade do ajuste. O frontmatter do subagente aceita também `effor
 
 Os dois agentes nomeados vêm com `effort: medium`. É um degrau abaixo do padrão, nos nós de maior volume, sem cair para `low` em tarefa que ainda exige julgar autoridade de precedente e enxergar o que um documento não diz. **É escolha fundamentada, não medida** — se numa peça real a pesquisa vier rasa, suba para `high` antes de culpar o modelo.
 
+### Onde o limite virou permissão, não só instrução
+
+Auditoria (14/09): `pesquisador-juridico` já não tinha ferramenta de arquivo nenhuma — não conseguia ler `~/segundo-cerebro/` mesmo que tentasse, restrição estrutural desde o início. `leitor-de-autos` tinha `Read`/`Glob`/`Grep` e só a prosa dizia "nunca leia o segundo cérebro" — nada impedia de verdade, e é exatamente o agente que processa documento de origem adversária (o candidato natural a receber instrução escondida numa peça de terceiro).
+
+Fechado com um hook `PreToolUse` no próprio frontmatter do `leitor-de-autos`, escopado só a ele (`settings.json` seria da sessão inteira, e bloquearia a conversa principal também — que precisa ler o acervo). Nega `Read`/`Glob`/`Grep` cujo caminho contenha `segundo-cerebro`, antes da tentativa. Testado com os quatro casos que importam: nega por `file_path` (Read), nega por `path` (Glob/Grep), permite documento normal do caso, não quebra quando o caminho vem vazio.
+
+**`Bash` do mesmo agente ficou de fora, deliberadamente.** Ele existe só para o fallback de PyMuPDF em PDF que o `Read` nativo não abre — mas tecnicamente permite muito mais que isso, e restringi-lo a um padrão de comando específico (`Bash(...)` allow-list) arrisca quebrar esse fallback se o comando exato mudar. Ainda não fechado; fica anotado para não parecer descuido.
+
 ### Alavancas que existem e que eu deliberadamente não puxei
 
 O frontmatter aceita mais coisa. Duas ficaram de fora, com motivo, para ninguém precisar redecidir isso do zero:
