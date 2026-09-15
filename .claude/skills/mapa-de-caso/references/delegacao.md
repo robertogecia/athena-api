@@ -125,6 +125,8 @@ Peça de volta:
 
 Instrução importante: o agente devolve o que está escrito, não o que deduz. Interpretação vem depois, no mapa, e sob a regra do nó `A`.
 
+**Documento único enorme não é sempre "um agente, um documento".** Se um único PDF (os autos inteiros, por exemplo) passar de algumas centenas de páginas, divida por faixa — um `leitor-de-autos` por faixa, todos em paralelo, cada um citando exatamente a faixa que cobriu (ex.: "páginas 1-300", "páginas 301-600"). A Etapa 3 (ligar os nós) continua sendo onde alguém cruza o que voltou de cada faixa — nenhuma faixa vê as outras, então uma contradição entre elas (a mesma data com valor diferente em duas partes do processo) só aparece se você comparar depois, não porque um agente comparou sozinho.
+
 ## Frente 5 — Verificação de dispositivo
 
 Quando a tese depende de artigo específico e o texto exato importa (prazo, requisito, vedação), vale um agente que confirme a redação vigente do dispositivo e se houve alteração recente.
