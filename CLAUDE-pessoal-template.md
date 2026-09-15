@@ -23,6 +23,8 @@ Quatro peças que trabalham juntas, instaladas em `~/.claude/skills/` e `~/.clau
 | "já usei essa tese antes?", guardar tese ou precedente para depois | `segundo-cerebro` (vive em `~/segundo-cerebro/`) — o `mapa-de-caso` consulta antes de pesquisar |
 | Documento final, timbrado | `peticao-rg` |
 
+**A tabela acima é o núcleo verificado aqui — não a lista inteira.** O `mapa-de-caso` já referencia mais skills na sua própria máquina (`obsidian-litigation`, `whatsapp-transcricao`, `calculo-tjro`, `insights-gemini`, `prompt-injection-juridico`) que nunca foram auditadas nesta conversa — só confirmei que o `mapa-de-caso` assume que existem, não li o conteúdo delas. Se uma tocar num caso e o comportamento parecer errado, é sinal para investigar aquela skill, não para desconfiar do núcleo acima.
+
 **Se a pasta da sessão tem PDFs de autos (inicial, contrato, decisão, laudo) e não parece projeto de código, é provável que seja um caso** — considere `mapa-de-caso` mesmo que o pedido não use a palavra "mapa" (ex.: "organiza esse processo", "o que temos de prova aqui", "monta a contestação").
 
 **Ordem entre `mapa-de-caso` e `peticao-rg`**: as duas reivindicam "redija a contestação", então vale a regra explícita — o `mapa-de-caso` vem primeiro, sempre. A `peticao-rg` formata o que já foi decidido; não decide o que escrever. E não gere o documento final timbrado enquanto houver 🔴 aberto no mapa: peça bem diagramada em cima de lacuna não resolvida é pior que peça nenhuma, porque parece pronta para assinar.

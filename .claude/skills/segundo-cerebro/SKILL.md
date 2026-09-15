@@ -20,7 +20,7 @@ O padrão vem de uma prática documentada por Andrej Karpathy e amadurecida por 
 
 ## O que NÃO é
 
-Não é onde um caso ativo vive — isso é o `mapa-de-caso`, e os autos continuam só na pasta do caso. Não é RAG nem banco vetorial — é markdown lido direto, e funciona bem até algumas centenas de notas; se passar disso, revisite o desenho. Não é lugar para "guardar por precaução" — é o inverso do impulso natural de arquivar tudo: **só entra o que já foi usado numa peça de verdade**. Base cheia de coisa nunca reaproveitada é a forma mais comum desse tipo de sistema morrer.
+Não é onde um caso ativo vive — isso é o `mapa-de-caso`, e os autos continuam só na pasta do caso. Não é onde mora a continuidade de UM caso entre sessões, tampouco — isso é a memória nativa do Claude Code (`MEMORY.md`), que o `mapa-de-caso` consulta à parte na Etapa 0. A fronteira: aqui entra o que atravessa casos — tese, precedente, o que já foi verificado uma vez e serve para o próximo caso parecido; lá entra o que pertence a um caso só — o que já foi apurado nele, para a sessão seguinte não redescobrir o que uma anterior já achou. Não é RAG nem banco vetorial — é markdown lido direto, e funciona bem até algumas centenas de notas; se passar disso, revisite o desenho. Não é lugar para "guardar por precaução" — é o inverso do impulso natural de arquivar tudo: **só entra o que já foi usado numa peça de verdade**. Base cheia de coisa nunca reaproveitada é a forma mais comum desse tipo de sistema morrer.
 
 ## Onde vive
 
