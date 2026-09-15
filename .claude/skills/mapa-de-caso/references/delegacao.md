@@ -6,7 +6,7 @@ Dispare todos os agentes **numa única mensagem, em paralelo**. São independent
 
 **Se os subagentes nomeados `pesquisador-juridico` e `leitor-de-autos` existirem** (`.claude/agents/`), use-os pelo nome — eles já têm a regra dura de citação e o escopo de ferramentas embutidos, então a delegação só precisa passar o concreto do caso (tese, dispositivo, documento), não reexplicar o método. Sem eles instalados, delegue a um agente genérico com as instruções completas de cada frente abaixo.
 
-Só a conversa principal lê e escreve em `~/segundo-cerebro/` — nenhum subagente tem essa tarefa. `pesquisador-juridico` nem tem ferramenta de arquivo (só JusRatio e web); verifica e devolve, não consulta o acervo por conta própria.
+Só a conversa principal lê e escreve em `~/segundo-cerebro/` — nenhum subagente tem essa tarefa. `pesquisador-juridico` nem tem ferramenta de arquivo (só JusRatio, MCP TJRO e web); verifica e devolve, não consulta o acervo por conta própria.
 
 ## Antes de tudo — já existe isso no segundo cérebro?
 
@@ -14,7 +14,7 @@ Se a skill `segundo-cerebro` estiver instalada (`~/segundo-cerebro/`) e você ai
 
 Hoje o acervo só guarda nota de tese e de precedente (Frente 1 — jurisprudência). Para doutrina (Frente 3) e leitura de documento (Frente 4) a consulta raramente vai achar algo — não custa conferir, mas não espere cobertura. Sem `segundo-cerebro` instalado, todas as frentes abaixo partem do zero.
 
-## Frente 1 — Jurisprudência (`pesquisador-juridico`, via JusRatio)
+## Frente 1 — Jurisprudência (`pesquisador-juridico`, via JusRatio: tribunais superiores e de fora de RO)
 
 Um agente por tese estruturante. Teses acessórias podem ir juntas num agente só.
 
@@ -23,26 +23,30 @@ O que a delegação precisa conter:
 - a **tese em uma frase**, com o dispositivo legal
 - o **fato concreto** a que ela se aplica (é o que separa precedente aplicável de ementa genérica)
 - a **contra-tese** que se espera — precedente contrário achado agora vale mais que surpresa na réplica
-- o **tribunal de interesse**, quando houver
-- instrução de devolver, para cada julgado, a **ficha de precedente** no formato do próprio agente (tribunal, órgão e relator lidos do texto, data de julgamento, número, id do documento, link, dispositivo/tese/trecho literais, `verificacao`) — é a ficha que entra em `precedentes` do JSON da `peticao-rg` (lint do build) e que o `segundo-cerebro` deposita; e, quando um número devolver mais de uma decisão, a lista de todas com data e resultado, dizendo qual é a da ficha
+- o **tribunal de interesse**, quando houver — tribunal com MCP próprio (TJRO, TRF1, TCE-RO) vai para a Frente 2, pelo seu MCP; o resto pelo JusRatio. A tabela de roteamento (chave pelo número CNJ, ou pela matéria de contas no caso do TCE-RO) é a do `pesquisador-juridico`, que já a aplica sozinho: basta nomear o tribunal na delegação
+- o **vocabulário** de cada tese: grupos de expressões equivalentes que os julgados podem usar para o mesmo fato ("negativação", "inscrição indevida", "cadastro de inadimplentes", "apontamento"). Quem monta é você, a conversa principal, porque é você que conhece o caso. Para divergir sobre terminologia de um setor, vale a skill `insights-gemini` — só com termo abstrato, nunca fato, parte ou número do caso. O agente parte daí e refina colhendo o vocabulário dos melhores resultados.
+- instrução de devolver, para cada julgado, a **ficha de precedente** no formato canônico do próprio agente — o mesmo que a `peticao-rg` confere no build e que o `segundo-cerebro` deposita. Não reescreva a lista de campos aqui: o agente já a tem, e duas listas desalinham com o tempo. O que vale lembrar na delegação é o que depende do caso: `fatos_relevantes` (2 a 4 fatos materiais de que a ratio depende — é o que permite o distinguishing depois), `limites` (a condição da ratio e o que o julgado NÃO sustenta) e, quando um número devolver mais de uma decisão, a lista de todas com data e resultado, dizendo qual é a da ficha
 
 Instruções operacionais para o agente:
 
 - **Uma busca abrangente vale mais que várias fatiadas.** Peça `limit` de 20 a 30 numa chamada só; fragmentar degrada o resultado.
 - Se for confirmar um julgado específico, **o número entra literal na query** ("REsp 1.234.567", "HC 843.649/RO") — a base tem busca exata por identificador, e sem o número no texto da consulta ele não dispara.
 - Priorize autoridade **A** (vinculante) e **B** (precedente qualificado).
-- Peça que sinalize precedente **superado** — tese boa que morreu é armadilha.
+- **Superação é obrigatória em autoridade A e B** (súmula, vinculante, repetitivo, IRDR, repercussão geral): `listar_overruling_por_tema`, uma chamada por tema, e `overruling_status` preenchido na ficha. Tese boa que morreu é armadilha. Para acórdão de câmara não existe superação formal, e o JusRatio não cobre isso — ali `"não checado"` é a resposta honesta, e mudança de entendimento do órgão se apura pela Frente 2, não se presume.
 - **Cota mensal**: chamadas em janela de ~5 minutos contam como uma pesquisa. Não repita busca por capricho; se a cota estourar, o agente reporta e o mapa registra a tese como pendente.
 
-## Frente 2 — Precedente local (TJRO)
+## Frente 2 — Precedente local e posição do órgão (TJRO)
 
-Quando o caso corre ou vai correr no TJRO, o entendimento da câmara que vai julgar pesa mais que o de tribunal distante. Vale também mapear o relator, se já sorteado.
+Quando o caso corre ou vai correr no TJRO, o entendimento da câmara que vai julgar pesa mais que o de tribunal distante. Se o relator já foi sorteado, como ele decide aquela tese é dado tático de primeira ordem: o escritório já viu relator com precedente próprio adverso à tese que se ia sustentar, e relator que era autor do paradigma que se queria citar.
 
-- Use o **MCP do TJRO** se estiver disponível na sessão.
-- Se não estiver, use o JusRatio com `tribunais: ["TJRO"]`.
-- **Diga no mapa qual via foi usada** — a cobertura das duas é diferente, e o advogado precisa saber se a busca local foi rasa.
+- **Tribunal com MCP próprio (TJRO desde 10/09/2026, TRF1 desde 11/09/2026, TCE-RO desde 13/09/2026) é só pelo seu MCP**, em qualquer período e grau — tabela no `pesquisador-juridico`. Sem o MCP na sessão, a frente fica `[PESQUISA NÃO REALIZADA]` e o mapa registra — o JusRatio não supre esses tribunais nem como reserva.
+- A busca é por palavras, então a delegação leva o **vocabulário** (ver Frente 1) e o agente segue o protocolo de três passos: grupos de sinônimos, âncora pela súmula ou tema citado, colheita do vocabulário do melhor resultado.
 
-Peça ao agente que separe o que é entendimento consolidado da câmara do que é decisão isolada, e que aponte divergência entre câmaras, se houver: divergência interna é argumento e é risco.
+**Quando houver relator ou câmara nomeados, peça "posição do órgão sobre a tese", com este teto:** uma busca filtrada por câmara (`orgao_colegiado`) e, quando disponível, por relator, com `por_pagina` alto; ordenação `recentes` ou `antigos`, nunca `relevantes`, que enviesa a amostra; e leitura integral de no máximo **três** acórdãos, os de fato mais próximos. O retorno separa entendimento reiterado do órgão de decisão isolada, aponta divergência entre câmaras quando houver (divergência interna é argumento e é risco) e diz quantos julgados foram efetivamente lidos. O filtro de câmara usa o **cadastro** do portal, que erra a câmara (a "3ª Câmara Cível" do cadastro traz acórdãos da 1ª e da 2ª): só conta como posição do órgão o acórdão cujo fecho confirma a câmara, e as regras de como conferir vivem no `pesquisador-juridico`.
+
+**O teto não é economia de token, é contenção de risco.** Varredura de centenas de acórdãos é exatamente o padrão que o filtro anti-automação do TJRO trata como ataque, e o escritório já levou bloqueio real. Amostra dirigida e declarada vale mais que estatística que derruba o acesso de todos.
+
+**Resultado não é posição.** Recurso provido por outro fundamento conta como provido e nada diz sobre a tese; contagem de resultados serve para escolher o que ler, nunca como conclusão. Quem afirma "a câmara rejeita essa tese" tem de ter lido os acórdãos que cita.
 
 ## Frente 3 — Doutrina (`pesquisador-juridico`, via web)
 
