@@ -24,9 +24,23 @@ negrito e recuo deslocado.
 
 ## Fluxo
 
-1. Redija o conteúdo da peça (o mérito jurídico é seu trabalho normal;
-   esta skill cuida só da forma).
+0. **É peça contenciosa? Procure o mapa antes de escrever qualquer linha.**
+   Inicial, contestação, réplica, reconvenção, impugnação, recurso, parecer e
+   afins: dê um `ls` na pasta do caso atrás do mapa do `mapa-de-caso`
+   (`mapa-do-caso.md`, `mapa*.md`) e leia a seção "Quando vem de um mapa de
+   caso" antes de continuar — vale mesmo que o pedido tenha chegado como
+   "gera o DOCX timbrado". **Não achou mapa? Pergunte**: "não localizei mapa
+   deste caso — quer que eu rode o `mapa-de-caso` primeiro, ou redijo
+   direto?". Nunca leia "não achei" como autorização para redigir do zero —
+   é exatamente aí que sai peça bonita e sem lastro. Documento que não é peça
+   contenciosa (procuração, contrato, notificação, mero expediente) pula
+   direto para o passo 1.
+1. Redija o conteúdo da peça — a partir do mapa, se houver (o mérito jurídico
+   é seu trabalho normal; esta skill cuida só da forma).
 2. Monte um JSON de blocos (formato abaixo) e salve em arquivo temporário.
+   **Veio de mapa? Antes de montar o JSON**, confirme que nenhum item 🔴, ⏰,
+   🟡, `[PESQUISA NÃO REALIZADA]` ou `[CONTRÁRIO NÃO RESOLVIDO]` ficou sem
+   decisão do advogado — a lista completa está na seção acima.
 3. Gere o DOCX:
    ```bash
    python3 <skill>/scripts/build_docx.py entrada.json
@@ -53,6 +67,80 @@ Fulano.docx`, `Apelação - Beltrano.docx`, `Embargos Declaratórios -
 Ciclano.docx`, `Agravo de Instrumento - Sicrano.pdf`. Use o tipo de peça
 por extenso e legível (não abreviado), e o primeiro nome (ou nome usual)
 do cliente, como o usuário já se refere a ele na conversa.
+
+## Quando vem de um mapa de caso
+
+Se a skill `mapa-de-caso` rodou antes (mapa salvo na pasta do caso ou montado
+na conversa), ele é a fonte do conteúdo — não reescreva do zero:
+
+- **Dos Fatos** sai da cronologia do mapa, na ordem das datas, cada fato com a
+  prova citada por arquivo e folhas.
+- **Do Direito** sai da matriz de amarração: um bloco por pedido, subindo tese
+  → fato → prova → precedente verificado — a citação é a **ficha de
+  precedente** inteira (ver "Citações verificadas" abaixo), não um resumo
+  solto. Precedente que o mapa marcou como "aplica por extensão" entra na
+  peça dizendo que é extensão, em parágrafo próprio, fora das aspas — não
+  como se a ratio batesse direto.
+- **Pedidos** saem dos nós `PD`, na ordem de dependência lógica.
+
+**PARE antes de gerar se o mapa deixou qualquer coisa para resolver antes do
+protocolo** — não só o que está marcado 🔴, mas também prazo e preclusão (⏰),
+tese em 🟡 que dependa de decisão sua, precedente com `[PESQUISA NÃO
+REALIZADA]` (a pesquisa não rodou — não é "não localizado"),
+`[CONTRÁRIO NÃO RESOLVIDO]` (precedente adverso que ninguém leu até o fim), e
+`PR` que o mapa marcou "distingue" de um fato do caso (o precedente não
+sustenta a tese como está — citá-lo assim é o erro que a parte contrária
+desmonta em uma linha). Diga quais são, explique o que cada uma muda no
+documento, e pergunte antes de montar o JSON. Não é formalidade: uma
+reconvenção que precluiu, ou uma peça que alega vício oculto e avaria
+aparente ao mesmo tempo, custa o caso — e o DOCX timbrado sai igualmente
+bonito nos dois casos.
+
+Liste **item a item**, cada um com o que muda no documento, e colha a resposta
+do advogado **por item** — um "pode gerar" global não é decisão informada, é o
+portão sendo cumprido por fora.
+
+Se ele mandar gerar assim mesmo, **gere — e deixe a pendência visível no
+documento entregue**, não só na conversa: o trecho afetado sai marcado (ex.:
+"[PENDENTE: confirmar se a avaria era aparente]") e você repete a lista na
+mensagem de entrega, dizendo que o arquivo não é versão de protocolo.
+
+**Pendência de prazo não se resolve com marcador.** Um "[PENDENTE]" dentro da
+contestação não preserva uma reconvenção que tinha de ser oferecida no mesmo
+ato, nem uma preliminar que precluiu — o documento sai marcado e o direito
+morre igual. Para item ⏰ só existem duas saídas: redigir agora o que precisa
+ser apresentado junto, ou o advogado dizer, por escrito, que está abrindo mão.
+Não ofereça a terceira.
+
+Tese que o mapa marcou como pendente de pesquisa entra na peça marcada como
+pendente, ou não entra. Nunca preencha o "Do Direito" com jurisprudência
+lembrada de memória — e lembre que o lint de citações (seção "Citações
+verificadas" abaixo) confere a peça contra a ficha no build, mas quem escreve
+a ficha é o `pesquisador-juridico`; este portão aqui é anterior a isso, e
+existe para nem chegar a montar o JSON com pendência sem decisão do advogado.
+
+### Este portão agora também é mecânico (gate_mapa.py)
+
+Até 15/09/2026 o parágrafo acima era só prosa — e um ensaio sintético desse
+dia mostrou o resultado: uma contestação saiu **timbrada, assinada e
+entregue** com `[A PREENCHER]` no lugar do nº do processo, CNPJ e endereço,
+sem que ninguém tivesse sido perguntado item a item primeiro. O `build_docx.py`
+agora roda `gate_mapa.py` **antes** do lint de citações e **recusa gerar**
+(sai com erro, nada de DOCX) sempre que encontrar `mapa-do-caso.md` (ou
+`mapa*.md`, na pasta do JSON ou na pasta do `"output"`) com item aberto em
+"🔴 Antes de protocolar" ou "⏰ Prazo e preclusão" — a menos que o JSON traga:
+
+- `"pendencias_mapa_confirmadas"`: lista não vazia dizendo o que o advogado
+  decidiu, item a item (prova de que a pergunta foi feita de verdade); **e**
+- pelo menos um bloco do documento com a marca `"[PENDENTE"` (o gate confere
+  isso também — confirmar sem marcar no documento entregue também é erro).
+
+Ou seja: a checagem de que fala este capítulo não depende mais só de você
+lembrar de fazê-la — o script recusa gerar se ela não aconteceu. Aponte
+`"mapa_do_caso": "<caminho>"` no JSON quando o mapa não estiver em
+`mapa-do-caso.md` na pasta óbvia; sem mapa nenhum encontrado (procuração,
+contrato, notificação, peça sem mapa), o gate não faz nada. Testes:
+`python3 scripts/gate_mapa.py --selftest`.
 
 ## Formato do JSON
 
