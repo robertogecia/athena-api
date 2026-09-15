@@ -3,17 +3,18 @@ name: mapa-de-caso
 description: >-
   Lê os autos (PDFs e documentos de uma pasta do caso), monta o mapa do caso — a
   cadeia pedido ← tese ← fato ← prova, com partes, contra-teses e prazos — e
-  diagnostica as lacunas antes da redação: alegação sem prova, pedido descoberto,
-  fato não impugnado, contra-tese sem resposta, contradição de datas, preclusão
-  iminente. Delega a subagentes em paralelo a pesquisa de jurisprudência
-  (JusRatio), de precedente local (TJRO) e de doutrina na web. Use SEMPRE antes
-  de redigir peça contenciosa — inicial, contestação, réplica, reconvenção,
-  parecer, recurso de qualquer tipo — ou qualquer peça que dependa de fato, prova
-  e tese; mesmo que o pedido seja direto, do tipo redija a contestação: monte o
-  mapa primeiro e só então redija. Use também para analisar autos, organizar
-  caso, montar cronologia, avaliar viabilidade de ação ou achar o ponto fraco de
-  uma tese. Não use para formatar ou timbrar texto pronto (isso é peticao-rg) nem
-  para revisar trecho isolado.
+  diagnostica as lacunas antes da redação — alegação sem prova, pedido
+  descoberto, fato não impugnado, contra-tese sem resposta, contradição de datas
+  e preclusão iminente. Delega a subagentes em paralelo a pesquisa de
+  jurisprudência (JusRatio), de precedente local (MCPs do TJRO, do TRF1 e do TCE-RO) e de doutrina na web.
+  Use SEMPRE antes de redigir peça contenciosa — inicial, contestação, réplica,
+  reconvenção, parecer, recurso de qualquer tipo — ou qualquer peça que
+  dependa de fato, prova e tese; mesmo que o pedido seja direto, do tipo
+  redija a contestação: monte o mapa primeiro e só então redija. Use também
+  para analisar autos, organizar caso, montar cronologia, avaliar viabilidade
+  de ação ou achar o ponto fraco de uma tese. Não use para formatar ou
+  timbrar texto já pronto (isso é peticao-rg) nem para revisar trecho
+  isolado.
 ---
 
 # Mapa de Caso
@@ -26,13 +27,15 @@ O mapa é ferramenta interna. Ele não vai para os autos — ele decide o que va
 
 Antes do roteiro, a condição — porque conferência escrita depois do trabalho vira carimbo. Sem algo que possa **reprovar** o mapa enquanto ninguém está olhando, não existe conferência: existe roteiro.
 
-Estas seis reprovam, e nenhuma delas exige julgar mérito. São conferíveis olhando a estrutura:
+Estas oito reprovam, e nenhuma delas exige julgar mérito. São conferíveis olhando a estrutura:
 
 ```
 REPROVA   F controvertido, de ônus do cliente, sem PV chegando nele
 REPROVA   PD cuja cadeia não desce até um PV
 REPROVA   T ou PD que depende de um nó A
 REPROVA   PR sem ficha de precedente completa (tribunal, órgão, relator, data, número, id do documento, link)
+REPROVA   PR ligado a T sem cruzar fatos_relevantes contra os F do caso
+REPROVA   [CONTRÁRIO NÃO RESOLVIDO] sem distinção escrita no mapa
 REPROVA   matéria do art. 337 que preclui nesta peça e ficou sem decisão
 REPROVA   contradição de datas na narrativa do cliente
 ```
@@ -45,7 +48,7 @@ NÃO REPROVA   nenhum erro apareceu na leitura
 
 A última é a que pega gente cuidadosa: **ausência de erro não é prova de correção.** Quem não achou lacuna pode não ter procurado — e o custo do engano fica com o cliente, não com quem leu.
 
-O diagnóstico completo, com as oito lacunas e as severidades, está na Etapa 5. Isto aqui é a condição, e ela vem antes de propósito.
+O diagnóstico completo, com as dez lacunas e as severidades, está na Etapa 5. Isto aqui é a condição, e ela vem antes de propósito.
 
 ## Roteiro
 
@@ -164,8 +167,8 @@ Se voltar com `[CONTRÁRIO NÃO RESOLVIDO — ...]`, a tese fica 🔴 até algu�
 
 Frentes típicas:
 
-- **Jurisprudência (JusRatio)** — uma busca abrangente por tese, não várias fatiadas.
-- **Precedente local** — quando o caso corre ou vai correr no TJRO, o entendimento da câmara que vai julgar vale mais que o de tribunal distante. Use o MCP do TJRO se estiver disponível na sessão; se não estiver, use o JusRatio filtrando por `tribunais: ["TJRO"]` e diga no mapa qual via usou.
+- **Jurisprudência (JusRatio)** — STJ, STF e tribunais sem MCP próprio; uma busca abrangente por tese, não várias fatiadas.
+- **Precedente local** — quando o caso corre ou vai correr num tribunal específico, o entendimento do órgão que vai julgar vale mais que o de tribunal distante. **Tribunal com MCP próprio (hoje TJRO, TRF1 e TCE-RO) é pesquisado só nele** (decisão do advogado, 10/09/2026, estendida em 11/09 e 13/09/2026); qual motor atende qual tribunal é a tabela do `pesquisador-juridico`, chaveada pelo número CNJ ou pela matéria (contas → TCE-RO) — não a repita aqui. Sem o MCP na sessão, aquela frente fica pendente e o mapa diz o motivo — nunca é suprida pelo JusRatio.
 - **Doutrina (web)** — para tese controvertida ou pouco julgada, onde o argumento precisa de autoridade acadêmica.
 - **Leitura de documento volumoso** — um agente por PDF pesado, devolvendo estrutura e passagens literais com página.
 
@@ -179,6 +182,16 @@ Frentes típicas:
 
 Julgado inventado em peça rende multa de 1% a 10% do valor da causa (CPC arts. 77, 80 e 81) e ofício à OAB — já aconteceu no TST, no TJPR, no TJSC e na Justiça Federal. É o único erro deste roteiro que custa dinheiro na hora.
 
+**Ligar `PR` a `T` é um passo de comparação, não de colagem.** A ficha traz `fatos_relevantes`, de 2 a 4 fatos materiais de que a ratio depende. Cruze-os com os nós `F` do caso, um a um, e escreva no mapa uma das três conclusões:
+
+- **aplica** — os fatos materiais estão presentes no caso; o precedente sustenta a tese direto;
+- **aplica por extensão** — a ratio é geral, mas o caso concreto do precedente é outro (ex.: tese enunciada para extinção em 1º grau, usada no plano recursal). Legítimo, e a peça tem de dizer que é extensão, em parágrafo próprio, fora das aspas;
+- **distingue** — falta um fato material. Aí o precedente não sustenta, e se for adverso é você quem escreve a distinção antes que a parte contrária a negue.
+
+Isso é o que nenhum agente de pesquisa pode fazer por você: ele não conhece os `F` do caso. Dois erros reais nasceram exatamente dessa etapa faltando — precedente de nulidade por fraude comprovada usado em caso de simples falta de prova (categorias diferentes, validade contra existência), e tese de repetitivo restrita a execução fiscal generalizada para execução civil.
+
+**`ratio_ou_dictum` muda o peso.** Trecho que a ficha marca como `dictum`, ou como `indeterminado` porque só a ementa foi lida, não sustenta tese sozinho: ou se lê o inteiro teor, ou o `PR` entra como reforço, nunca como fundamento principal. Dictum citado como ratio é o que a parte contrária desmonta em uma linha.
+
 ## Etapa 5 — Diagnosticar lacunas
 
 | # | Lacuna | Como detectar | Severidade |
@@ -191,6 +204,8 @@ Julgado inventado em peça rende multa de 1% a 10% do valor da causa (CPC arts. 
 | 6 | **Contra-tese aberta** | `CT` sem `responde` | 🟡 a 🔴 conforme a gravidade |
 | 7 | **Prova frágil ou solta** | `PV` unilateral/suspeita, ou que não prova fato nenhum alegado | 🟡 |
 | 8 | **Preclusão iminente** | Matéria que só pode ser alegada agora | 🔴 — ver `references/checklists-cpc.md` |
+| 9 | **Precedente sem identidade fática** | `PR` ligado a `T` sem que os `fatos_relevantes` da ficha tenham sido cruzados com os `F` do caso, ou cruzamento que resultou em "distingue" | 🟡 se é reforço · 🔴 se é o único `PR` da tese |
+| 10 | **Contrário não resolvido** | agente devolveu `[CONTRÁRIO NÃO RESOLVIDO]`, ou a ficha traz precedente adverso sem distinção escrita | 🔴 — tirar da peça não resolve, o julgado continua vivo para a parte contrária e para o relator |
 
 Fechado o checklist, levante os olhos dos autos e pergunte duas coisas — elas não saem de nenhuma lista, e é onde costuma estar o que vira o jogo:
 
@@ -198,7 +213,7 @@ Fechado o checklist, levante os olhos dos autos e pergunte duas coisas — elas 
 
 **Quanto vale isso, de verdade?** Feche com uma leitura econômica em duas ou três linhas: o cenário provável em números, a faixa de acordo razoável, e o custo de litigar até o fim. O advogado precisa disso para conversar com o cliente antes da peça — e às vezes o mapa mostra que o melhor resultado possível é pior que um acordo que já está na mesa. Valor que depende de atualização monetária ou cálculo de cumprimento de sentença no TJRO: gerar com a skill `calculo-tjro` (Calculadora Judicial oficial), não estimar.
 
-**A regra do verde.** 🟢 exige as três: cadeia fecha em prova existente, dispositivo conferido no texto da lei, e precedente verificado nesta sessão. Faltando qualquer uma, no máximo 🟡. Tese que depende de `A` ou que tem 🔴 na cadeia **herda o 🔴** — nunca aparece como 🟡 ou 🟢.
+**A regra do verde.** 🟢 exige as quatro: cadeia fecha em prova existente, dispositivo conferido no texto da lei, precedente verificado nesta sessão, e cruzamento de fatos feito (o `PR` "aplica" ou "aplica por extensão", com a extensão declarada). Faltando qualquer uma, no máximo 🟡. Tese que depende de `A` ou que tem 🔴 na cadeia **herda o 🔴** — nunca aparece como 🟡 ou 🟢.
 
 E o rodapé obrigatório da matriz: *"🟢 significa 'sem lacuna detectada pelo checklist', não 'pronto para protocolar'."*
 

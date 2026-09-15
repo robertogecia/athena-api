@@ -1,85 +1,60 @@
 # Correção da skill `peticao-rg`
 
-**Esta versão substitui a anterior.** A correção de 314→375 linhas que existia
-aqui até 09/09 foi feita contra um `SKILL.md` que já não reflete o que está
-instalado — a versão em uso real cresceu para 799 linhas por conta própria,
-com conteúdo que esta correção teria apagado se copiada por cima (ver
-`BASE-instalada-09-09.md`, a cópia exata do que estava instalado quando isso
-foi descoberto). Nada do que segue foi testado num caso real, e isso está dito
-abaixo com todas as letras.
+**Terceira versão.** A produção continua evoluindo mais rápido do que qualquer
+reconciliação pontual consegue acompanhar — 799 linhas em 09/09, 945 em 14/09,
+cinco dias depois. `BASE-instalada-14-09.md` é a cópia exata do que estava
+instalado quando isso foi capturado. Se você está lendo isto bem depois dessa
+data, **confira antes de aplicar**: se o que está instalado não bater com
+`BASE-instalada-14-09.md`, esta correção já está desatualizada do mesmo jeito
+que a de 09/09 ficou.
 
 **Não fica em `.claude/skills/`** de propósito: a skill real depende de
-`scripts/` e `assets/template.docx`, que continuam só na máquina; uma cópia
-dentro de `.claude/skills/` seria carregada pelo Claude Code e falharia ao
-procurar o template.
+`scripts/` e `assets/template.docx`, que continuam só na máquina.
 
 ## Como aplicar
 
-Substitua **apenas** o `SKILL.md` da skill instalada. `scripts/`, `assets/` e
-`references/` ficam intocados. **Antes de sobrescrever, confira se o que está
-instalado agora ainda bate com `BASE-instalada-09-09.md`** — se divergiu de
-novo nesse meio-tempo, este arquivo pode estar tão desatualizado quanto a
-versão anterior estava.
-
 ```
-diff ~/.claude/skills/peticao-rg/SKILL.md BASE-instalada-09-09.md   # deve dar vazio
+diff ~/.claude/skills/peticao-rg/SKILL.md BASE-instalada-14-09.md   # deve dar vazio
 cp SKILL.md ~/.claude/skills/peticao-rg/SKILL.md
 ```
 
-## O que é isto, de verdade
+Se o `diff` não der vazio, pare — o arquivo instalado já mudou de novo desde
+14/09, e aplicar por cima cegamente repete o erro que a v1 quase cometeu.
 
-Duas linhagens da mesma skill evoluíram em paralelo sem se falar: uma sessão
-remota (que fez o desenho do portão — mapa antes de redigir, PARE antes de
-gerar) e o uso real em casos de verdade (que fez o resto — timbre, blocos,
-convenções extraídas de peças reais, e um **lint de citações que roda no
-build e recusa a peça** se uma citação não bater com a ficha do precedente).
-Isso aqui é a reconciliação: o portão, reaplicado do zero contra a versão de
-799 linhas — não um `diff` antigo remendado por cima dela.
+## O que a produção trouxe entre 09/09 e 14/09, que esta correção preserva
 
-## O que o portão faz (inalterado em espírito desde a v1)
+Nada disso é meu — vem de uso real, com incidentes datados no próprio arquivo.
+Só preservei, não inventei nem simplifiquei:
 
-1. **Passo `0.` do Fluxo** — busca obrigatória pelo mapa do caso antes de
-   escrever qualquer linha. *Não achou mapa? Pergunte* — nunca vira
-   autorização para redigir direto.
-2. **Checkpoint repetido** no passo `2.`, logo antes de montar o JSON.
-3. **`## Quando vem de um mapa de caso`** — portão "PARE" cobrindo 🔴, ⏰, 🟡,
-   e agora também `[PESQUISA NÃO REALIZADA]` e `[CONTRÁRIO NÃO RESOLVIDO]` —
-   os dois marcadores que a linhagem de produção acrescentou ao
-   `pesquisador-juridico` e que a v1 desta correção não conhecia. Decisão
-   **item a item**, nunca um "pode gerar" global.
-4. **Pendência de prazo não se resolve com marcador** — para item ⏰ só
-   existem duas saídas: redigir agora, ou o advogado renunciar por escrito.
+- Roteamento por tribunal com MCPs próprios do TJRO, TRF1 (desde 11/09) e
+  TCE-RO (desde 13/09), cada um com sintaxe de busca e teto de verificação
+  diferentes
+- O lint de citações (`lint_citacoes.py`) ganhou os campos novos que o
+  `pesquisador-juridico` passou a produzir: `orgao_fonte`, `ratio_ou_dictum`,
+  `fatos_relevantes`, `overruling_status`
+- Medição real (14/09): 15 de 24 processos que o cadastro do TJRO classificou
+  na "3ª Câmara Cível" foram julgados por outra câmara — daí a exigência de
+  `orgao_fonte: "fecho"` para citar câmara do TJRO
 
-Uma peça a mais: o portão é anterior ao lint de citações do build, não
-concorrente com ele. O lint confere a peça **já escrita** contra a ficha do
-precedente; o portão impede que a peça comece a ser escrita com pendência
-sem decisão do advogado. Os dois ficam.
+## O que esta correção acrescenta de novo, desde a v2
 
-## O que foi verificado nesta reconciliação, e como
+O portão ("mapa antes de redigir") foi **reaplicado do zero** contra a base de
+945 linhas — não é o diff de 09/09 remendado. E passou a cobrir o que a
+produção acrescentou desde então: precedente que o mapa marcou "aplica por
+extensão" entra na peça dizendo que é extensão, fora das aspas; `PR` marcado
+"distingue" de um fato do caso não entra como se sustentasse a tese.
 
-Não rodei o build nem gerei DOCX desta vez — isso já tinha sido feito na v1,
-contra o template real, e não há razão para achar que quebrou. O que **foi**
-conferido, de forma mecânica, não por leitura:
+## Verificado nesta reconciliação
 
-- **Nenhum parágrafo da base de 799 linhas sumiu.** Script comparou os 21
-  parágrafos substanciais do arquivo instalado contra o resultado da mesclagem
-  — todos sobrevivem verbatim, exceto o único bloco que eu sei que toquei
-  (o "Fluxo", passos 1-2). Zero perda silenciosa.
-- **Diff final tem exatamente 2 hunks** — a inserção do passo `0` e a seção
-  nova. Nada mais no arquivo foi reformatado ou tocado de passagem.
-- YAML válido, descrição **idêntica** à instalada (não mexi nela — não achei
-  problema nela desta vez).
+- Todos os 24 parágrafos substanciais da base de 945 linhas sobrevivem
+  verbatim no resultado, exceto o único bloco deliberadamente tocado (Fluxo,
+  passos 1-2) — conferido por script, não por leitura
+- YAML válido, descrição inalterada (não achei problema nela desta vez)
 
-## O que não foi verificado — e é mais do que da vez passada
+## O que não foi verificado — igual às duas vezes anteriores
 
-- **Este merge específico nunca gerou um documento.** A v1 tinha um teste
-  ponta a ponta (8 MB, 52 partes); esta reconciliação não repetiu isso contra
-  a base nova, porque a base nova só apareceu nesta sessão.
-- A renderização visual — timbre, rodapé, assinatura — segue sem conferência
-  em qualquer ambiente além do Mac real.
-- **O portão em si nunca rodou num caso real**, nem na v1 nem aqui.
-- `mapa-de-caso` e os dois subagentes (`pesquisador-juridico`,
-  `leitor-de-autos`) passaram pela mesma reconciliação, no mesmo commit desta
-  branch — não numa pasta separada, porque não têm o problema de
-  `scripts/`/`assets/` que exige manter o `peticao-rg` fora de
-  `.claude/skills/`.
+- Este merge específico nunca gerou um documento nem rodou o `lint_citacoes.py`
+- O portão em si nunca rodou num caso real
+- Não avaliei se `effort: high` (subido no `pesquisador-juridico` nesta
+  rodada, por causa do roteamento multi-tribunal) é o nível certo — é
+  julgamento sobre a complexidade que o agente ganhou, não medição

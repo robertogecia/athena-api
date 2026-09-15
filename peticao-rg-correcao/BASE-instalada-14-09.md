@@ -16,8 +16,8 @@ description: >-
 
 Gera DOCX (e PDF) idêntico ao modelo do escritório: timbre, rodapé,
 numeração, fontes embutidas e estilo de parágrafo são herdados de um
-template extraído de uma peça real "com tipografia" (um agravo de
-instrumento) — nunca recriados à mão. Além dos blocos de texto, reproduz os
+template extraído de um agravo de instrumento real do escritório "com
+tipografia" — nunca recriados à mão. Além dos blocos de texto, reproduz os
 elementos de destaque que dão o acabamento profissional: **caixa de
 destaque** (quadro azul-marinho + lista) e **pedidos** com marcador em
 negrito e recuo deslocado.
@@ -49,10 +49,10 @@ negrito e recuo deslocado.
 Salve o arquivo na pasta que o usuário indicar (ou na pasta do caso), com
 nome no padrão **`<Tipo de Peça> - <Cliente>.docx`** — o tipo da peça vem
 primeiro, depois o nome do cliente. Exemplos: `Petição Inicial -
-Pedro.docx`, `Apelação - Ana.docx`, `Embargos Declaratórios -
-João.docx`, `Agravo de Instrumento - Maria.pdf`. Use o tipo de peça por
-extenso e legível (não abreviado), e o primeiro nome (ou nome usual) do
-cliente, como o usuário já se refere a ele na conversa.
+Fulano.docx`, `Apelação - Beltrano.docx`, `Embargos Declaratórios -
+Ciclano.docx`, `Agravo de Instrumento - Sicrano.pdf`. Use o tipo de peça
+por extenso e legível (não abreviado), e o primeiro nome (ou nome usual)
+do cliente, como o usuário já se refere a ele na conversa.
 
 ## Formato do JSON
 
@@ -172,11 +172,18 @@ Tipos de bloco:
   seguinte migra sozinho, de forma limpa, para a página seguinte.
 - `pedido` — item de pedido com `marcador` em **negrito** e recuo
   deslocado (as linhas seguintes alinham sob o texto). `nivel: 2` recua
-  mais (para subitens tipo `b.1)`). Prefira este bloco a parágrafos
-  "a) ..." soltos — é o padrão visual das peças recentes. **Conteúdo do
-  `texto`**: escreva o pedido completo e autoexplicativo — nunca remeta
-  à fundamentação ("nos termos acima", "pelos motivos expostos", "conforme
-  fundamentado"). Ver regra completa em "Conteúdo dos pedidos" abaixo.
+  mais (para subitens tipo `a.1)`, `a.2)`, `a.3)`). Prefira este bloco a
+  parágrafos "a) ..." soltos — é o padrão visual das peças recentes.
+  **`texto` sempre começa com letra maiúscula** — aplicado
+  automaticamente pelo script (`cap_primeira_letra`, regra do usuário,
+  set/2026), não precisa capitalizar na mão ao escrever o JSON, mas
+  escreva como se fosse maiúsculo mesmo assim (mais legível no JSON).
+  **Sempre que um pedido se desdobrar em subpedidos ou tiver pedido
+  subsidiário/alternativo, abra os subitens com `nivel: 2`** (marcador
+  `a.1)`, `a.2)`, `a.3)` — letra minúscula do pedido-pai + número —, não
+  amontoe tudo num parágrafo só nem deixe o pedido subsidiário
+  disfarçado dentro do texto do pedido principal. Ver "Conteúdo dos
+  pedidos" abaixo para o que entra no `texto` de cada um.
 - `tabela` — **grade de dados real** (bordas finas, cabeçalho azul-marinho
   com texto branco, zebra striping nas linhas). Use para comparar vários
   itens por vários critérios lado a lado — planilha de cálculo, quadro
@@ -220,7 +227,7 @@ Tipos de bloco:
   `"encerramento"` com o texto exato em vez de `"recurso"`.
   **Segundo signatário (co-advogado):** passe `"nome2"`/`"oab2"` para
   incluir um co-advogado assinando junto (ex.: `"nome2": "Fulano de
-  Tal", "oab2": "OAB/RO 0000"`). Ele aparece centralizado
+  Tal", "oab2": "OAB/RO 00000"`). Ele aparece centralizado
   na metade esquerda do fecho, ao lado do nome/OAB principal (que fica na
   direita, sob a assinatura manuscrita) — a célula esquerda existe vazia
   por padrão justamente para isso. Sem assinatura manuscrita própria (a
@@ -269,7 +276,26 @@ Tipos de bloco:
 - Estrutura típica: Resumo/Síntese → fundamentos por seção → Pedidos.
 - **Pedidos**: use o bloco `pedido` (marcador em negrito + recuo deslocado),
   não parágrafos "a) ..." soltos. Marcadores no padrão das peças: `A.`,
-  `B.`, `C.`... com subitens `b.1)`, `b.2)` (`nivel: 2`).
+  `B.`, `C.`... com subitens `a.1)`, `a.2)`, `a.3)` (`nivel: 2`).
+- **Primeira letra do pedido sempre maiúscula, e subpedido/pedido
+  subsidiário sempre em `nivel: 2`** (regra do usuário, set/2026): o
+  `texto` de cada `pedido` começa com maiúscula — o script já corrige
+  isso sozinho (`cap_primeira_letra`), então não é preciso decorar, mas
+  escreva assim de qualquer forma. E sempre que um pedido tiver
+  desdobramento (vários subpedidos) ou pedido subsidiário/alternativo
+  ("caso não seja esse o entendimento, subsidiariamente..."), abra
+  esses subitens como pedidos `nivel: 2` próprios (`a.1)`, `a.2)`,
+  `a.3)` — letra minúscula do pedido-pai + número — em vez de embutir
+  tudo dentro do texto corrido do pedido principal. Exemplo:
+  ```json
+  {"tipo": "pedido", "marcador": "A.", "texto": "A reforma da sentença para julgar procedente o pedido de indenização, com os seguintes desdobramentos:"},
+  {"tipo": "pedido", "marcador": "a.1)", "nivel": 2, "texto": "condenação ao pagamento de R$ 10.000,00 a título de danos morais;"},
+  {"tipo": "pedido", "marcador": "a.2)", "nivel": 2, "texto": "condenação ao pagamento das custas e honorários sucumbenciais;"},
+  {"tipo": "pedido", "marcador": "B.", "texto": "Subsidiariamente, caso não seja este o entendimento, a anulação da sentença para novo julgamento."}
+  ```
+  (repare que `a.1)`/`a.2)` também começam com minúscula — só o
+  marcador nivel 1 usa letra maiúscula, `A.`/`B.`/`C.`; o `texto` de
+  cada subitem, esse sim, começa maiúsculo, aplicado automaticamente).
 - **Conteúdo dos pedidos — completo, mas sem fundamentação** (regra do
   usuário, ago/2026): o juiz pode ler só os pedidos e ignorar a
   fundamentação — por isso cada pedido tem que dizer, sozinho, exatamente
@@ -358,6 +384,26 @@ Tipos de bloco:
      então está garantido" — a regra é o ponto de partida, a checagem é
      o que garante. Isso vale mesmo se o resumo já pareceu curto o
      bastante da primeira vez.
+
+  **A página 1 termina com a caixa; o primeiro tópico abre a página 2**
+  (regra do usuário, 10/09/2026, padrão para toda peça com resumo +
+  caixa). Nada do corpo da peça ("I. Dos fatos" ou equivalente) pode
+  começar na página 1 abaixo da caixa. Técnica: empurre o bloco
+  resumo + caixa para baixo com blocos `{"tipo": "espaco"}` **antes do
+  título "Resumo"** (nunca entre o resumo e a caixa, nunca
+  `quebra_pagina` depois da caixa, que gera página em branco), até o
+  título da primeira seção migrar sozinho para a página 2. Comece com
+  3 `espaco` e confira com o verificador, que diz o que ajustar:
+  ```bash
+  python3 <skill>/scripts/check_pagina1.py "Peca.pdf"   # opções: --caixa "RAZÕES PARA" --secao "I."
+  ```
+  Ele falha se o tópico ficou na página 1 (acrescente um `espaco`), se a
+  caixa saiu da página 1 (retire um `espaco` ou corte uma frase do
+  resumo) ou se a página 2 não começa pelo tópico. Rode sempre, depois
+  de cada conversão para PDF: a hifenização muda de um render para
+  outro, e o mesmo texto pode passar num e falhar noutro. Caso real
+  (arguição de impedimento, 10/09/2026): 3 `espaco` bastaram; a caixa
+  terminou a ~100pt do rodapé e o título foi sozinho para a página 2.
 - **Recursos direcionados a outro órgão: interposição + razões, duas
   peças, dois endereçamentos** (regra do usuário, set/2026, pesquisada
   na web antes de implementar — ver fontes ao final). Vale para
@@ -550,6 +596,43 @@ Tipos de bloco:
     curta ou longa, dispositivo legal, ementa, decisão ou doutrina. Ex.:
     `"[...] esvazia o interesse recursal [...]."`, nunca `"(...) esvazia
     o interesse recursal (...)."`.
+  - **Negrito estratégico dentro de citação longa** (regra do usuário,
+    set/2026): o bloco `citacao` aceita `**negrito**` no meio do texto
+    entre aspas para destacar o trecho decisivo da transcrição — com
+    sobriedade (uma frase ou cláusula curta por citação, nunca o
+    parágrafo inteiro) e estratégia (o trecho que sustenta diretamente o
+    argumento que vem antes ou depois da citação, não qualquer frase
+    "importante" em abstrato). **Sempre que usar esse negrito, acrescente
+    `", grifamos"` ao final do campo `"atribuicao"`** (antes do
+    parêntese de fechamento) — é a prática padrão para avisar que o
+    destaque não está no original. Sem negrito na citação, não acrescente
+    "grifamos". O `runs()` do `build_docx.py` faz o split de `**...**` e
+    `*...*` por regex simples, sem suporte a aninhamento: nunca coloque
+    um `*itálico*` (termo em latim/língua estrangeira, ver regra abaixo)
+    dentro de um trecho já em `**negrito**` — a sequência `**texto
+    *interno* texto**` sai com asteriscos literais visíveis no PDF. Se o
+    termo em itálico cair dentro do trecho que seria negritado, ajuste o
+    corte do negrito para não sobrepor (ex.: encerre o `**negrito**` antes
+    do termo, deixe o termo só em `*itálico*`, e retome outro `**negrito**`
+    depois se necessário).
+  - **Termos em latim ou em língua estrangeira: sempre em itálico**
+    (regra do usuário, set/2026) — em qualquer bloco de texto autoral
+    (`paragrafo`, `subtitulo`, `titulo`, `pedido`, `caixa_destaque`) e
+    também dentro de bloco `citacao` (a transcrição preserva as palavras,
+    mas a tipografia em itálico para estrangeirismo é convenção editorial
+    de quem transcreve, não altera o conteúdo — por isso não exige
+    "grifamos"). Ex.: `*custos vulnerabilis*`, `*in re ipsa*`, `*tempus
+    regit actum*`, `*data venia*`, `*ab initio*`, `*decisum*`, `*pas de
+    nullité sans grief*`. Vale para a primeira ocorrência e para todas as
+    seguintes no mesmo documento (não é "só na primeira menção" como
+    outras convenções da casa) — cada aparição do termo leva itálico,
+    porque a marca é ortográfica, não uma explicação que já foi dada.
+    Expressão já aportuguesada e de uso corrente em português jurídico
+    (ex.: "habeas corpus" quando vira substantivo comum do texto, "per
+    si", "a priori" só quando resta como locução emprestada) segue a
+    mesma regra: se ainda soa como estrangeirismo, vai em itálico. Termos
+    consagrados que já viraram siglas ou nomes próprios de instituto
+    (ex.: "STJ", "CPC") não entram nessa regra.
 - **A cidade do fecho é SEMPRE Porto Velho/RO**, porque é onde fica o
   escritório e onde o advogado assina — independentemente de onde tramita
   o processo. Um agravo endereçado ao Tribunal de Justiça de outro
@@ -666,7 +749,10 @@ não era dele. "Nunca cite de memória" deixou de ser disciplina e virou
 propriedade do build.
 
 O que o lint faz, por citação encontrada no texto (número CNJ, REsp/AREsp/
-AgInt/RE/HC..., Tema, Súmula, IRDR):
+AgInt/RE/HC..., Tema, Súmula, IRDR, acórdão de Tribunal de Contas no formato
+sigla+número — `APL-TC`, `AC1-TC`, `AC2-TC`, `APLR-TC`, `AC1R-TC`, `AC2R-TC`
+seguido de `NNNNN/AA`, 14/09/2026, siglas reais do TCE-RO; sigla de outro TC/TCU
+fora desse desenho não é reconhecida):
 
 - **sem ficha** em `precedentes` → ERRO;
 - **relator, data (dd/mm/aaaa) ou órgão** na frase/atribuição diferentes da
@@ -676,6 +762,49 @@ AgInt/RE/HC..., Tema, Súmula, IRDR):
   da ficha → paráfrase ou corte sem `[...]` é ERRO;
 - ficha `"só ementa/índice"` → AVISO; `"não conferido"` conta como sem ficha;
   ficha com `verificado_em` há mais de 180 dias → AVISO; ficha nunca citada → AVISO.
+- precedente do **TJRO** citado como **"3ª Câmara Cível"** sem `"orgao_fonte": "fecho"`
+  na ficha → ERRO. O cadastro do portal põe na 3ª acórdãos julgados pela 1ª ou
+  pela 2ª (15 de 24 processos na medição de 14/09/2026), e a ficha que copia o
+  cadastro passa limpa na conferência peça × ficha: foi assim em 4 peças reais.
+  A câmara que vale é a do fecho do acórdão ("acordam os Magistrados da(o) ...").
+- **link do inteiro teor** (pedido do usuário, 14/09/2026): todo julgado citado cuja
+  ficha traga `link` de domínio público (`.jus.br`, `.tc.br`, `.gov.br`, `.leg.br`,
+  `.mp.br`) sai com a **referência inteira clicável** — "(TJRO, Agravo de Instrumento
+  NNNNNNN-NN.AAAA.8.22.0000, 1ª Câmara Cível, Rel. ..., j. .../.../....)", parênteses
+  incluídos, não só o número — para o inteiro teor, no DOCX e no PDF (azul-marinho,
+  sublinhado; o texto da peça não muda), para o juiz conferir a fonte. Refinado em
+  14/09/2026 a pedido do usuário: a 1ª versão linkava só o número, "pouco visível
+  dentro da referência". **Só a primeira menção de cada julgado/tema no documento
+  vira link** (pedido do usuário, 15/09/2026: peça que cita "Tema 1300"/"Tema 1150"
+  em várias frases saía com hiperlink em cada menção, poluindo o texto corrido) —
+  `build_docx.py` guarda em `_LINKED_URLS` toda URL já usada e não linka de novo a
+  mesma URL, mesmo que a citação reapareça em bloco diferente; as menções seguintes
+  saem em texto normal, sem sublinhado nem cor de link. **Citação de classe "tema"
+  (bare "Tema 1300"/"Tema 1150", sem número de REsp/acórdão junto) nunca vira link,
+  nem na primeira menção** (refinamento do usuário, mesmo dia, 15/09/2026) —
+  `_CLASSES_SEM_LINK = {"tema"}` em `build_docx.py`, `runs()` filtra `_LINKS`
+  removendo todo ident cuja classe esteja nesse conjunto antes de chamar
+  `segmentar_links`; a citação formal do julgado (REsp, número do acórdão, id.) que
+  sustenta aquele tema continua linkável normalmente. `segmentar_links` expande para o grupo `(...)` que envolve a
+  citação quando ela é a única linkável ali dentro (duas citações linkáveis no mesmo
+  parêntese, ex. separadas por ";", não expandem — cada uma linka só o próprio número,
+  para não apontar o mesmo trecho a dois lugares); fora de parênteses, linka só o
+  número, como antes. Ficha sem `link` → AVISO, a peça sai sem link para aquele julgado
+  — **nunca fabrique um link para não sair esse aviso**: no teste de demonstração desta
+  mesma tarde, um `num_registro` inventado para uma ficha de exemplo caiu em página
+  inexistente do STJ; link de demonstração segue a mesma regra do link real, só entra
+  se for verificado. Link fora de portal oficial (JusRatio, Jusbrasil, blog) → AVISO,
+  não entra; link do JURIS que abre **outra peça** (`id=` diferente do `id_documento`
+  da ficha) → ERRO. Esse último é erro real: uma ficha guardou o id do acórdão com o
+  link do relatório de outro documento do mesmo número. Desde 14/09/2026: link de
+  domínio de **outro tribunal** que não o da ficha → ERRO (link do JURIS/TJRO numa
+  ficha `"tribunal": "TCE-RO"`, ou vice-versa — os dois são domínio oficial, mas do
+  tribunal errado; só cobre TJRO e TCE-RO, os que têm MCP próprio com host conhecido).
+  TCE-RO **não tem** a proteção "id= diferente" do JURIS — o link do PDF é um hash
+  opaco, sem o id da decisão embutido; a defesa contra link da decisão errada sob o
+  mesmo número de acórdão é só disciplina de quem monta a ficha (sempre
+  `obter_acordao_tcero(id_decisao=...)` específico, nunca copiar link de uma busca
+  ambígua por número).
 
 Campos na raiz do JSON:
 
@@ -694,16 +823,33 @@ Esquema da ficha (é o contrato do `pesquisador-juridico`; respeite os nomes):
 
 ```json
 {"chave": "AI 0819477-50.2024.8.22.0000", "numero": "0819477-50.2024.8.22.0000",
- "tribunal": "TJRO", "orgao": "2ª Câmara Cível", "relator": "Des. Alexandre Miguel",
+ "tribunal": "TJRO", "orgao": "2ª Câmara Cível", "orgao_fonte": "fecho | cabeçalho | índice",
+ "relator": "Des. Alexandre Miguel",
  "relator_para_acordao": null, "julgamento": "2025-11-07", "publicacao": null,
  "tipo_decisao": "acórdão em embargos de declaração", "id_documento": "30009487",
  "link": "https://juris.tjro.jus.br/jurisprudencia/?id=30009487",
  "outras_decisoes_no_mesmo_numero": ["2026-04-29 — 2º ED rejeitados (Rel. Gurgel do Amaral)"],
  "dispositivo": "texto literal ou null", "tese": "literal, só repetitivo/súmula/IRDR, ou null",
  "ementa": null, "trecho": "trecho literal, cortes com [...]",
- "sustenta": "uma linha", "verificado_em": "2026-09-04",
+ "fatos_relevantes": ["2 a 4 fatos materiais de que a ratio depende"],
+ "ratio_ou_dictum": "ratio | dictum | indeterminado",
+ "sustenta": "uma linha, nunca mais ampla que o trecho",
+ "limites": "a condição da ratio e o que o julgado NÃO sustenta",
+ "overruling_status": "vigente | superado por X | não checado",
+ "verificado_em": "2026-09-04",
  "verificacao": "inteiro teor lido", "fonte_verificacao": "MCP TJRO — texto do acórdão"}
 ```
+
+Estes são os nomes **canônicos**, compartilhados com o `pesquisador-juridico` (que produz
+a ficha), o `segundo-cerebro` e o template `Ficha-jurisprudência` do vault (que a guardam).
+Esta seção é a fonte da tabela: as outras skills remetem a ela em vez de repeti-la.
+
+Fichas antigas do vault e do acervo usam outros nomes, e o lint os **lê** por sinônimo:
+`doc_id` → `id_documento`, `data_julgamento` → `julgamento`, `data_publicacao` →
+`publicacao`, `orgao_julgador` → `orgao`, `superacao` ou `status` → `overruling_status`.
+Ficha nova escreve só o canônico. `fatos_relevantes`, `ratio_ou_dictum`, `limites` e
+`overruling_status` não são conferidos pelo lint (ele não tem como): servem ao
+distinguishing, que é trabalho do `mapa-de-caso`, e à decisão de usar ou não o precedente.
 
 Regras de redação que o lint pressupõe:
 

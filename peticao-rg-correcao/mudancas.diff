@@ -1,5 +1,5 @@
---- peticao-rg-correcao/BASE-instalada-09-09.md	2026-09-09 19:29:32.401263967 +0000
-+++ peticao-rg-correcao/SKILL.md	2026-09-09 19:29:32.399277996 +0000
+--- peticao-rg-correcao/BASE-instalada-14-09.md	2026-09-15 18:49:15.708955874 +0000
++++ peticao-rg-correcao/SKILL.md	2026-09-15 18:49:15.706656051 +0000
 @@ -24,9 +24,23 @@
  
  ## Fluxo
@@ -26,9 +26,9 @@
  3. Gere o DOCX:
     ```bash
     python3 <skill>/scripts/build_docx.py entrada.json
-@@ -54,6 +68,52 @@
- extenso e legível (não abreviado), e o primeiro nome (ou nome usual) do
- cliente, como o usuário já se refere a ele na conversa.
+@@ -54,6 +68,57 @@
+ por extenso e legível (não abreviado), e o primeiro nome (ou nome usual)
+ do cliente, como o usuário já se refere a ele na conversa.
  
 +## Quando vem de um mapa de caso
 +
@@ -40,18 +40,23 @@
 +- **Do Direito** sai da matriz de amarração: um bloco por pedido, subindo tese
 +  → fato → prova → precedente verificado — a citação é a **ficha de
 +  precedente** inteira (ver "Citações verificadas" abaixo), não um resumo
-+  solto.
++  solto. Precedente que o mapa marcou como "aplica por extensão" entra na
++  peça dizendo que é extensão, em parágrafo próprio, fora das aspas — não
++  como se a ratio batesse direto.
 +- **Pedidos** saem dos nós `PD`, na ordem de dependência lógica.
 +
 +**PARE antes de gerar se o mapa deixou qualquer coisa para resolver antes do
 +protocolo** — não só o que está marcado 🔴, mas também prazo e preclusão (⏰),
 +tese em 🟡 que dependa de decisão sua, precedente com `[PESQUISA NÃO
-+REALIZADA]` (a pesquisa não rodou — não é "não localizado") e
-+`[CONTRÁRIO NÃO RESOLVIDO]` (precedente adverso que ninguém leu até o fim).
-+Diga quais são, explique o que cada uma muda no documento, e pergunte antes de
-+montar o JSON. Não é formalidade: uma reconvenção que precluiu, ou uma peça
-+que alega vício oculto e avaria aparente ao mesmo tempo, custa o caso — e o
-+DOCX timbrado sai igualmente bonito nos dois casos.
++REALIZADA]` (a pesquisa não rodou — não é "não localizado"),
++`[CONTRÁRIO NÃO RESOLVIDO]` (precedente adverso que ninguém leu até o fim), e
++`PR` que o mapa marcou "distingue" de um fato do caso (o precedente não
++sustenta a tese como está — citá-lo assim é o erro que a parte contrária
++desmonta em uma linha). Diga quais são, explique o que cada uma muda no
++documento, e pergunte antes de montar o JSON. Não é formalidade: uma
++reconvenção que precluiu, ou uma peça que alega vício oculto e avaria
++aparente ao mesmo tempo, custa o caso — e o DOCX timbrado sai igualmente
++bonito nos dois casos.
 +
 +Liste **item a item**, cada um com o que muda no documento, e colha a resposta
 +do advogado **por item** — um "pode gerar" global não é decisão informada, é o
