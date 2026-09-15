@@ -137,6 +137,12 @@ Muitos documentos, muitos réus, muitos pedidos: pergunte ao usuário se ele que
 
 Antes de disparar um workflow, escreva **o que reprova cada etapa** — e escreva de um jeito que dê para conferir sem julgar mérito: "todo julgado devolvido tem número, órgão, data e link", "toda passagem citada tem número de página", "nenhum fato entrou sem documento". Etapa que não pode reprovar não é etapa de pipeline: é fila. E o problema de rodar dez frentes sem isso não é o custo — é que o erro de uma delas chega ao mapa parecendo resultado.
 
+## `/loop` e Routine — por que nenhum aparece nas frentes acima
+
+`/loop` vive só na sessão atual: some ao abrir conversa nova, sem aviso, e não tem como retomar um disparo perdido — mesmo no modo fixo, expira em 7 dias. É para "polling rápido durante uma sessão", não para nada que precise sobreviver ao fim dela. Prazo processual, ou qualquer checagem que precise rodar mesmo com o Claude fechado, pede **Routine** (agendamento que sobrevive à sessão), nunca `/loop`.
+
+Tem um caso específico onde `/loop` seria o erro certo, não só o genérico: o lint do `segundo-cerebro`. A skill diz — "não rode isso sozinho a cada sessão, é comando do usuário, não hook automático" — de propósito: sigilo (a base pode ter trecho de auto colado) e é o advogado quem decide quando a base está pronta para ser conferida. Um `/loop` diário rodando o lint sozinho desfaria essa decisão, não a executaria.
+
 ## Consolidando
 
 Agentes em paralelo não conversam entre si — cada um só enxerga o próprio pedaço. Isso é seguro quando a tarefa é checável rápido (achou o julgado certo? leu o PDF certo?) e perigoso quando a coerência entre as frentes importa e ninguém olhou o conjunto. Antes de consolidar, é você — não os agentes — quem cruza os resultados:
