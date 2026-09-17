@@ -18,16 +18,20 @@ Quatro peças que trabalham juntas, instaladas em `~/.claude/skills/` e `~/.clau
 
 | Quando | O quê |
 |---|---|
-| Antes de redigir peça em caso com mais de um fato, prova ou pedido | `mapa-de-caso` — monta o grafo do caso e as lacunas antes de escrever |
-| Pesquisa de jurisprudência/doutrina, leitura de documento pesado | subagentes `pesquisador-juridico` e `leitor-de-autos` — o `mapa-de-caso` já delega a eles |
-| "já usei essa tese antes?", guardar tese ou precedente para depois | `segundo-cerebro` (vive em `~/segundo-cerebro/`) — o `mapa-de-caso` consulta antes de pesquisar |
-| Documento final, timbrado | `peticao-rg` |
+| Antes de redigir peça em caso com mais de um fato, prova ou pedido | `mapa-de-caso-escritorio` — monta o grafo do caso e as lacunas antes de escrever |
+| Pesquisa de jurisprudência/doutrina, leitura de documento pesado | subagentes `pesquisador-juridico` e `leitor-de-autos` — o mapa já delega a eles |
+| Conferir a minuta contra o mapa, antes de timbrar | agente `revisor-adversarial` — o mapa também delega |
+| Decidir **como** argumentar, depois que a tese já foi decidida | `retorica-juridica` |
+| "já usei essa tese antes?", guardar tese ou precedente para depois | `acervo-de-teses` — o mapa consulta antes de pesquisar do zero |
+| Documento final, timbrado, com print dos autos | `peticao-escritorio` |
+
+**Precedência entre as duas gerações.** `mapa-de-caso-escritorio` e `peticao-escritorio` são as atuais. `mapa-de-caso` e `peticao-rg` ainda estão instaladas e reivindicam os mesmos pedidos — nos casos deste escritório, **as do escritório ganham sempre**; as antigas só valem em máquina onde as novas não existam. E `acervo-de-teses` substituiu `segundo-cerebro`: onde qualquer arquivo ainda disser `~/segundo-cerebro/`, leia como o acervo atual.
 
 **A tabela acima é o núcleo verificado aqui — não a lista inteira.** O `mapa-de-caso` já referencia mais skills na sua própria máquina (`obsidian-litigation`, `whatsapp-transcricao`, `calculo-tjro`, `insights-gemini`, `prompt-injection-juridico`) que nunca foram auditadas nesta conversa — só confirmei que o `mapa-de-caso` assume que existem, não li o conteúdo delas. Se uma tocar num caso e o comportamento parecer errado, é sinal para investigar aquela skill, não para desconfiar do núcleo acima.
 
 **Se a pasta da sessão tem PDFs de autos (inicial, contrato, decisão, laudo) e não parece projeto de código, é provável que seja um caso** — considere `mapa-de-caso` mesmo que o pedido não use a palavra "mapa" (ex.: "organiza esse processo", "o que temos de prova aqui", "monta a contestação").
 
-**Ordem entre `mapa-de-caso` e `peticao-rg`**: as duas reivindicam "redija a contestação", então vale a regra explícita — o `mapa-de-caso` vem primeiro, sempre. A `peticao-rg` formata o que já foi decidido; não decide o que escrever. E não gere o documento final timbrado enquanto houver 🔴 aberto no mapa: peça bem diagramada em cima de lacuna não resolvida é pior que peça nenhuma, porque parece pronta para assinar.
+**Ordem entre a skill de mapa e a de peça**: as duas reivindicam "redija a contestação", então vale a regra explícita — o mapa vem primeiro, sempre. A skill de peça formata o que já foi decidido; não decide o que escrever. (`peticao-escritorio` já recusa gerar com pendência aberta no mapa — o portão deixou de ser só instrução.) E não gere o documento final timbrado enquanto houver 🔴 aberto no mapa: peça bem diagramada em cima de lacuna não resolvida é pior que peça nenhuma, porque parece pronta para assinar.
 
 ## Quanto de esforço usar em cada caso
 

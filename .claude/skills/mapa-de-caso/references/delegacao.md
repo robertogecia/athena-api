@@ -16,8 +16,26 @@ Os subagentes nomeados já declaram `model: sonnet` no próprio arquivo. Sem ess
 |---|---|---|
 | **Sonnet** | as cinco frentes abaixo — pesquisar tese concreta, ler documento, conferir dispositivo | Trabalho delimitado, com pergunta já formulada e formato de resposta definido. É o padrão |
 | **Opus** | a conversa principal, que consolida — e qualquer agente cuja tarefa seja **achar o que está errado** | Divergência sutil entre o que foi pedido e o que voltou é onde modelo mais fraco concorda com o que lê. Este é o portão; não economize nele |
-| **Haiku** | quase nunca | Tem **200K de contexto, um quinto dos outros** — laudo extenso ou processo inteiro não cabe, e é o que a Frente 4 existe para ler. Some-se a isso: se a tarefa é mecânica a esse ponto, pergunte antes se não é `grep` ou script |
+| **Haiku** | quase nunca | Tem **200K de contexto, um quinto dos outros** — laudo extenso ou processo inteiro não cabe, e é o que a Frente 4 existe para ler. E **não aceita `effort` nenhum** (conferido na documentação em 17/09): num agente Haiku o segundo eixo de ajuste simplesmente não existe. Some-se a isso: se a tarefa é mecânica a esse ponto, pergunte antes se não é `grep` ou script |
 | **Fable** | por ora, não | Custa **o dobro do Opus** e não há nenhuma medição dele neste trabalho. Se um dia couber, é numa consolidação única de caso de valor alto — nunca nas frentes, que é onde está o volume |
+
+### A decisão, tarefa por tarefa
+
+Com a topologia do escritório instalada (`mapa-de-caso-escritorio`, `retorica-juridica`, `peticao-escritorio`, `acervo-de-teses`, mais o agente `revisor-adversarial`), a atribuição fica assim:
+
+| Tarefa | Onde roda | Modelo | `effort` | Por quê |
+|---|---|---|---|---|
+| Inventariar nós, ligar a cadeia, diagnosticar lacuna | conversa principal | Opus | o da sessão | É o julgamento do caso. Não delega |
+| Pesquisar jurisprudência (tese concreta já formulada) | `pesquisador-juridico` | Sonnet | `high` | Pergunta dada, formato de resposta dado — mas roteia por quatro motores e classifica *ratio*/*dictum* |
+| Ler documento pesado, transcrever literal | `leitor-de-autos` | Sonnet | `medium` | Transcrever não é julgar; ainda exige enxergar o que o documento não diz |
+| Verificar dispositivo legal vigente | `pesquisador-juridico` | Sonnet | `medium` | Checagem pontual e conferível |
+| Construir a contra-tese a partir só dos fatos | frente própria, sem ver a tese do cliente | Opus | `high` | Achar onde o caso quebra. Modelo fraco concorda com a moldura que recebeu |
+| Conferir a minuta contra o mapa | `revisor-adversarial` | Opus | `high` | É o portão. Não economize nele |
+| Decidir *como* argumentar | `retorica-juridica`, na conversa principal | Opus | o da sessão | Escolha de ordem e ênfase é próxima da decisão de tese |
+| Timbrar, inserir print, conferir citação contra ficha | `peticao-escritorio` | — | — | Determinístico: formatação e conferência de campo. Não é trabalho de modelo grande |
+| Depositar tese/precedente no acervo | conversa principal | — | — | Só com confirmação do usuário. Nunca um subagente decidindo sozinho o que entra |
+
+**Duas linhas da tabela não foram verificadas em arquivo, só pela descrição da skill:** `revisor-adversarial` e `retorica-juridica` — não li o corpo deles. A atribuição de Opus a ambos segue a regra geral abaixo (quem procura erro e quem decide ênfase vai em Opus), não uma leitura do que eles realmente fazem. Se os arquivos já declararem `model`/`effort` próprios, o que vale é o arquivo, não esta tabela.
 
 ### O segundo eixo: `effort`
 
@@ -75,13 +93,6 @@ Tempo aqui não é o modelo pensando — é frente mal recortada. As três coisa
 1. **Frentes disparadas em série.** São independentes: uma mensagem só, todas juntas. Rodar em fila multiplica a espera pelo número de frentes sem melhorar nada.
 2. **Pedido sem teto**, que é o campeão. Uma frente com recorte aberto demais consumiu quase o triplo do tempo de uma conferência adversarial que era a tarefa mais difícil da rodada.
 3. **Esperar em vez de reformular.** Frente muito mais lenta que as irmãs não está achando mais coisa — está sem limite. Interrompa.
-
-
-## Antes de tudo — já existe isso no segundo cérebro?
-
-Se a skill `segundo-cerebro` estiver instalada (`~/segundo-cerebro/`) e você ainda não conferiu o `indice.md` dela na Etapa 0, consulte agora, antes de delegar. Tese com nota lá já tem precedentes verificados com data — reconfirme se estiver com mais de 6 meses, mas não pesquise do zero o que já foi verificado.
-
-Hoje o acervo só guarda nota de tese e de precedente (Frente 1 — jurisprudência). Para doutrina (Frente 3) e leitura de documento (Frente 4) a consulta raramente vai achar algo — não custa conferir, mas não espere cobertura. Sem `segundo-cerebro` instalado, todas as frentes abaixo partem do zero.
 
 ## Frente 1 — Jurisprudência (`pesquisador-juridico`, via JusRatio: tribunais superiores e de fora de RO)
 
@@ -152,6 +163,35 @@ Artigo citado de cabeça é a alucinação mais discreta: o número está certo,
 Muitos documentos, muitos réus, muitos pedidos: pergunte ao usuário se ele quer rodar um **workflow de agentes** — leitura em paralelo de todos os documentos, depois pesquisa por tese, depois consolidação. Vale a pena a partir de umas dez frentes independentes; abaixo disso, subagentes em paralelo já dão conta e custam menos.
 
 Antes de disparar um workflow, escreva **o que reprova cada etapa** — e escreva de um jeito que dê para conferir sem julgar mérito: "todo julgado devolvido tem número, órgão, data e link", "toda passagem citada tem número de página", "nenhum fato entrou sem documento". Etapa que não pode reprovar não é etapa de pipeline: é fila. E o problema de rodar dez frentes sem isso não é o custo — é que o erro de uma delas chega ao mapa parecendo resultado.
+
+### Esteira ou barreira — a decisão que mais custa relógio
+
+Um workflow de várias etapas pode ser montado de dois jeitos, e escolher errado é o desperdício mais silencioso que existe aqui:
+
+- **Esteira** (`pipeline`): cada item percorre todas as etapas por conta própria. O laudo já está sendo conferido enquanto o contrato ainda está sendo lido. O relógio total é a **cadeia mais longa de um item só**.
+- **Barreira** (`parallel`): a etapa seguinte espera *todos* terminarem a anterior. O relógio total é a soma dos mais lentos de cada etapa.
+
+**A esteira é o padrão.** A barreira se justifica só quando a etapa seguinte precisa do conjunto inteiro para existir:
+
+| Barreira justificada | Barreira injustificada |
+|---|---|
+| Deduplicar antes de verificar — três frentes acharam o mesmo REsp, e verificar três vezes é cota jogada fora | "Preciso juntar as listas numa só" — juntar é código, faz dentro da etapa |
+| Cruzar para achar contradição — a mesma data com valor diferente em duas faixas do PDF só aparece comparando | "As etapas são conceitualmente separadas" — separadas não é o mesmo que sincronizadas |
+| Sair fora se o total for zero: nenhum precedente achado, não há o que verificar | "Fica mais limpo o código" — a espera é real e custa relógio |
+
+No caso concreto isto tem tradução direta: **ler cada documento e conferir o que ele devolveu é esteira** — a conferência da faixa 1-300 não depende da faixa 301-600 ter voltado. **A Etapa 3 do mapa é barreira de verdade**, e é a única obrigatória: ligar os nós exige ter todas as frentes na mesa, porque é exatamente ali que a contradição entre elas aparece. Isso não é limitação da ferramenta; é a razão pela qual a consolidação é sua e não de um agente.
+
+### Varredura até secar
+
+Para achado de tamanho desconhecido — quantos vícios tem um contrato longo, quantos pontos da inicial ficaram sem impugnação — contar não funciona: "ache dez" para nos dez, e "ache todos" não tem critério de parada. O que funciona é rodar frentes até **duas rodadas seguidas não trazerem nada novo**.
+
+Com uma armadilha que precisa estar escrita: **compare o novo achado contra tudo que já apareceu, não contra o que foi confirmado.** Se a comparação for só contra os confirmados, todo achado que a conferência rejeitou volta na rodada seguinte como se fosse novidade, é reconferido, é rejeitado outra vez — e a varredura nunca seca. O descarte também é memória.
+
+### Onde o workflow não entra
+
+Nada disso vale para o que decide o caso. Esteira, barreira e varredura organizam **coleta e conferência**; tese, pedido e protocolo continuam na faixa que não abre. Um workflow que "decide" qual tese sustentar não é orquestração melhor — é a decisão do advogado delegada por acidente de arquitetura.
+
+Duas restrições técnicas que valem saber antes de desenhar: só umas dez frentes correm de fato ao mesmo tempo (o resto fica na fila, mesmo que você dispare cem), e frente que morre ou que o usuário pula volta vazia em vez de dar erro — quem consolida tem de tratar "voltou vazia" como `[PESQUISA NÃO REALIZADA]`, nunca como "não achou nada".
 
 
 ## `/loop` e Routine — por que nenhum aparece nas frentes acima

@@ -14,7 +14,8 @@ description: >-
   para analisar autos, organizar caso, montar cronologia, avaliar viabilidade
   de ação ou achar o ponto fraco de uma tese. Não use para formatar ou
   timbrar texto já pronto (isso é peticao-rg) nem para revisar trecho
-  isolado.
+  isolado. Se a skill mapa-de-caso-escritorio estiver instalada, ela tem
+  precedência: use esta apenas quando aquela não existir.
 ---
 
 # Mapa de Caso
@@ -88,7 +89,7 @@ Export do WhatsApp com áudio ou vídeo (audiência, depoimento, nota de voz do 
 
 **Toda prova no mapa cita origem**: `PV3 · Contrato de empreitada · doc-02.pdf, fls. 12-18`. Prova sem localização é prova que você não vai achar na hora da audiência.
 
-5. **Se a skill `segundo-cerebro` estiver instalada, dê uma olhada no `indice.md` dela agora** — antes de inventariar os nós, não só na hora de delegar. Informa de cara se alguma tese do caso já está resolvida (nota com `verificado_em` dentro de 6 meses), o que muda quanto esforço o caso todo vai pedir. A Etapa 4 não precisa reconsultar o que já foi visto aqui — só delegar o que ficou de fora.
+5. **Se o acervo estiver instalado — hoje a skill se chama `acervo-de-teses`; em máquina antiga, `segundo-cerebro` — dê uma olhada no `indice.md` dele agora** — antes de inventariar os nós, não só na hora de delegar. Informa de cara se alguma tese do caso já está resolvida (nota com `verificado_em` dentro de 6 meses), o que muda quanto esforço o caso todo vai pedir. A Etapa 4 não precisa reconsultar o que já foi visto aqui — só delegar o que ficou de fora.
 
 6. **Caso que vive no vault Obsidian** (`01 - Projetos/`): siga também a skill `obsidian-litigation` — ela rege as convenções do vault (nomenclatura, fichas, onde salvar o mapa e as minutas) e a disciplina dos MCPs jurídicos. O mapa continua sendo o diagnóstico; ela é a camada de vault e ferramentas dentro dele.
 
@@ -282,7 +283,7 @@ O mapa é diagnóstico, não índice de parágrafos — se a peça pedir outra o
 
 Para o documento final timbrado em DOCX/PDF, use a skill `peticao-rg`.
 
-Se a skill `segundo-cerebro` estiver instalada e a peça já tiver sido redigida (não antes — só o que de fato foi usado entra lá), ofereça depositar as teses e os precedentes verificados deste caso. É o que faz o próximo caso sobre o mesmo tema começar sem pesquisar do zero.
+Se o acervo estiver instalado (`acervo-de-teses`, ou `segundo-cerebro` em máquina antiga) e a peça já tiver sido redigida (não antes — só o que de fato foi usado entra lá), ofereça depositar as teses e os precedentes verificados deste caso. É o que faz o próximo caso sobre o mesmo tema começar sem pesquisar do zero.
 
 ## Sigilo
 
