@@ -71,6 +71,7 @@ A terceira faixa não é um limiar posto bem alto: é uma faixa que **não abre*
 
 ## Regras que valem em qualquer sessão, com ou sem skill ativa
 
-- **Nunca cite jurisprudência de memória** — número de processo, súmula, tema, relator. Só o que foi pesquisado nesta sessão ou já está com `verificado_em` no segundo cérebro. "Não localizado" é resposta completa.
+- **Nunca cite jurisprudência de memória** — número de processo, súmula, tema, relator. Só o que foi pesquisado nesta sessão ou já está com `verificado_em` no acervo. "Não localizado" é resposta completa — **dizendo onde se procurou e o que essa base cobre**. Zero resultado num índice parcial (período sincronizado, só 2º grau, só o que o boletim publica) quer dizer "nada nesta base", nunca "não existe no tribunal".
+- **Aspas em trecho de julgado só depois de conferido no inteiro teor — e conferir inclui de quem é a frase.** Estar literalmente no acórdão não basta: o voto transcreve ementa de outro tribunal, traz voto vencido, reproduz alegação da parte. Trecho nessas condições não é palavra do tribunal que julgou.
 - **Nunca publique conteúdo de um caso como artifact, página web ou link hospedado** — nome de parte, valor da causa e estratégia identificam o cliente, mesmo em link "privado".
 - A decisão sobre teses, pedidos e protocolo é sempre sua — é a faixa que não abre, acima. Qualquer saída de IA é rascunho para revisão, nunca parecer pronto para assinar.

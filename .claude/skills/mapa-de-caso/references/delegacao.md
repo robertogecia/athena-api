@@ -6,7 +6,7 @@ Dispare todos os agentes **numa única mensagem, em paralelo**. São independent
 
 **Se os subagentes nomeados `pesquisador-juridico` e `leitor-de-autos` existirem** (`.claude/agents/`), use-os pelo nome — eles já têm a regra dura de citação e o escopo de ferramentas embutidos, então a delegação só precisa passar o concreto do caso (tese, dispositivo, documento), não reexplicar o método. Sem eles instalados, delegue a um agente genérico com as instruções completas de cada frente abaixo.
 
-Só a conversa principal lê e escreve em `~/segundo-cerebro/` — nenhum subagente tem essa tarefa. `pesquisador-juridico` nem tem ferramenta de arquivo (só JusRatio, MCP TJRO e web); verifica e devolve, não consulta o acervo por conta própria.
+Só a conversa principal lê e escreve em `~/segundo-cerebro/` — nenhum subagente tem essa tarefa. `pesquisador-juridico` nem tem ferramenta de arquivo (só JusRatio, os MCPs de tribunal e web); verifica e devolve, não consulta o acervo por conta própria.
 
 ## Que modelo em cada nó
 
@@ -26,7 +26,7 @@ Com a topologia do escritório instalada (`mapa-de-caso-escritorio`, `retorica-j
 | Tarefa | Onde roda | Modelo | `effort` | Por quê |
 |---|---|---|---|---|
 | Inventariar nós, ligar a cadeia, diagnosticar lacuna | conversa principal | Opus | o da sessão | É o julgamento do caso. Não delega |
-| Pesquisar jurisprudência (tese concreta já formulada) | `pesquisador-juridico` | Sonnet | `high` | Pergunta dada, formato de resposta dado — mas roteia por quatro motores e classifica *ratio*/*dictum* |
+| Pesquisar jurisprudência (tese concreta já formulada) | `pesquisador-juridico` | Sonnet | `high` | Pergunta dada, formato de resposta dado — mas roteia por cinco motores e classifica *ratio*/*dictum* |
 | Ler documento pesado, transcrever literal | `leitor-de-autos` | Sonnet | `medium` | Transcrever não é julgar; ainda exige enxergar o que o documento não diz |
 | Verificar dispositivo legal vigente | `pesquisador-juridico` | Sonnet | `medium` | Checagem pontual e conferível |
 | Construir a contra-tese a partir só dos fatos | frente própria, sem ver a tese do cliente | Opus | `high` | Achar onde o caso quebra. Modelo fraco concorda com a moldura que recebeu |
@@ -43,7 +43,7 @@ Modelo é só metade do ajuste. O frontmatter do subagente aceita também `effor
 
 `leitor-de-autos` continua em `effort: medium` — degrau abaixo do padrão, sem cair para `low` em tarefa que ainda exige enxergar o que um documento não diz.
 
-`pesquisador-juridico` subiu para `effort: high` em 14/09 — revisão, não medição. Quando o `medium` foi escolhido, o agente tinha uma rota (TJRO ou JusRatio). Hoje roteia por quatro motores com sintaxes de busca diferentes (JusRatio semântico, grupos+âncora do TJRO, BRS/CJF do TRF1, ePapyrus do TCE-RO), sondagem assíncrona do JusRatio, verificação de câmara por fecho/cabeçalho/índice, classificação `ratio_ou_dictum`, e a pesquisa de posição do órgão com teto de três acórdãos sob risco de bloqueio por automação. Tarefa que cresceu em julgamento pede mais raciocínio — mas segue **escolha fundamentada, não medida**: se a pesquisa vier rasa numa peça real, é o primeiro lugar a olhar antes de subir para `xhigh`.
+`pesquisador-juridico` subiu para `effort: high` em 14/09 — revisão, não medição. Quando o `medium` foi escolhido, o agente tinha uma rota (TJRO ou JusRatio). Hoje roteia por cinco motores com sintaxes de busca diferentes (JusRatio semântico, grupos+âncora do TJRO, BRS/CJF do TRF1, ePapyrus do TCE-RO e, desde 23/09, o índice local do TJSE, que se usa junto com o JusRatio), sondagem assíncrona do JusRatio, verificação de câmara por fecho/cabeçalho/índice, classificação `ratio_ou_dictum`, e a pesquisa de posição do órgão com teto de três acórdãos sob risco de bloqueio por automação. Tarefa que cresceu em julgamento pede mais raciocínio — mas segue **escolha fundamentada, não medida**: se a pesquisa vier rasa numa peça real, é o primeiro lugar a olhar antes de subir para `xhigh`.
 
 ### Onde o limite virou permissão, não só instrução
 
@@ -126,6 +126,8 @@ Quando o caso corre ou vai correr no TJRO, o entendimento da câmara que vai jul
 
 **O teto não é economia de token, é contenção de risco.** Varredura de centenas de acórdãos é exatamente o padrão que o filtro anti-automação do TJRO trata como ataque, e o escritório já levou bloqueio real. Amostra dirigida e declarada vale mais que estatística que derruba o acesso de todos.
 
+**No TJSE a conta é outra.** O MCP do TJSE busca num índice local — busca não toca o portal, e o motivo do teto acima (risco de bloqueio por varredura) não existe na busca. Ali, "posição do órgão" pode ir mais longe sem custo: filtro por órgão e relator, `cita=` com o tema ou a súmula da tese e `mapa_de_citacoes_tjse` mostram quais câmaras aplicam aquele precedente, e quais acórdãos do próprio TJSE elas mais reusam — inclusive anteriores ao período sincronizado. O teto de **três leituras integrais** continua, porque a primeira leitura de cada inteiro teor toca o portal. E **quem sincroniza é você, antes de delegar, uma vez**: rode `diagnostico_tjse`; se o período que as teses pedem não está coberto, `sincronizar_boletim_tjse` até "período completo". Nunca deixe isso para as frentes — elas rodam em paralelo, e sincronizar em paralelo é exatamente o que o servidor pede para não fazer.
+
 **Resultado não é posição.** Recurso provido por outro fundamento conta como provido e nada diz sobre a tese; contagem de resultados serve para escolher o que ler, nunca como conclusão. Quem afirma "a câmara rejeita essa tese" tem de ter lido os acórdãos que cita.
 
 ## Frente 3 — Doutrina (`pesquisador-juridico`, via web)
@@ -206,7 +208,7 @@ Agentes em paralelo não conversam entre si — cada um só enxerga o próprio p
 
 - **Compare achados de frentes diferentes antes de virarem `PR` na mesma matriz.** Duas pesquisas sobre teses vizinhas podem trazer precedentes que se contradizem, ou um julgado que uma frente marcou como vigente e outra (ou a verificação de dispositivo) indica superado. Divergência entre agentes é sinal para checar, não para escolher o resultado que chegou primeiro.
 - julgado vira nó `PR` **só** com identificação completa e link;
-- o que não foi encontrado vira `[CARECE DE PRECEDENTE]`, não vira suposição;
+- o que não foi encontrado vira `[CARECE DE PRECEDENTE — <base>, <período>, <instâncias>]`, não vira suposição. **A cobertura é parte do marcador**, não detalhe: zero resultado numa base parcial diz "nada aqui", não "nada no tribunal". Medido no índice do TJSE (21/09/2026, gabarito montado às cegas): mesmo quando a busca acha, ela acha entre 11 % e 80 % dos acórdãos essenciais, conforme a tese. `[CARECE DE PRECEDENTE]` sem cobertura se lê como "não existe" — e é por esse marcador que o advogado decide largar uma tese;
 - fato novo que apareceu na leitura de documento entra como `F` (documento comprova); leitura interpretativa entra como `A`;
 - se um agente falhou ou a cota estourou, **registre isso no mapa** — pesquisa não feita não pode se parecer com pesquisa sem resultado.
 
@@ -224,6 +226,9 @@ Duas técnicas, dois alvos diferentes:
 |---|---|---|
 | **Auditoria** — lê a especificação e o que já foi produzido, procura onde quebra | erro de implementação: comparação invertida, campo nunca lido, regra ao contrário | suposição que quem audita compartilha com quem produziu, por terem lido o mesmo texto ambíguo |
 | **Produção paralela independente** — lê só a especificação, nunca o que já foi produzido, monta a própria versão do zero | suposição não escrita — a segunda versão resolve a ambiguidade sem saber como a primeira resolveu | é mais lenta e mais cara; não vale para todo caso |
+| **Dado real em escala** — rodar sobre o volume de verdade e procurar anomalia estatística | o que a amostra é pequena demais para conter | nada que o volume não exponha; e não diz a causa, só que há uma |
+
+A terceira linha veio do MCP do TJSE, e com dois casos que nenhuma das outras duas pegaria. Dois red teams adversariais, sobre o código, não acharam que só a primeira página de cada seção do Boletim era lida — perda silenciosa de ~35 % das câmaras cíveis — porque a edição de teste cabia numa página; quem denunciou foram quatro seções com **exatamente 995** itens. E a suposição de que o número do acórdão tem 9 dígitos veio de uma amostra, viveu em três lugares e só caiu quando medida no corpus inteiro (16,5 % têm menos) — um desses lugares era o lint de citações da peça, onde o número curto passava do portão **sem ficha e sem conferência**. Suposição tirada de amostra não falha alto: falha deixando passar.
 
 **No mapa isso já existe, em forma jurídica: é o nó `CT`.** Contra-tese vale mais construída a partir dos fatos crus do que como resposta à tese já escrita — é por isso que a Frente 1 pede "a contra-tese que se espera" junto da pesquisa favorável, não depois dela. Para tese estruturante, onde o resultado do caso pode depender de qual leitura dos fatos prevalece, considere uma frente que recebe só os fatos, sem ver a tese do cliente, para construir a contra-tese — mais caro, e por isso reservado ao que a palavra "estruturante" já filtra no início da Frente 1.
 

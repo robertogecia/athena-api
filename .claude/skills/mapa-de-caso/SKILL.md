@@ -6,16 +6,15 @@ description: >-
   diagnostica as lacunas antes da redação — alegação sem prova, pedido
   descoberto, fato não impugnado, contra-tese sem resposta, contradição de datas
   e preclusão iminente. Delega a subagentes em paralelo a pesquisa de
-  jurisprudência (JusRatio), de precedente local (MCPs do TJRO, do TRF1 e do TCE-RO) e de doutrina na web.
+  jurisprudência (JusRatio e MCPs de tribunal) e de doutrina na web.
   Use SEMPRE antes de redigir peça contenciosa — inicial, contestação, réplica,
-  reconvenção, parecer, recurso de qualquer tipo — ou qualquer peça que
+  reconvenção, parecer, recurso — ou qualquer peça que
   dependa de fato, prova e tese; mesmo que o pedido seja direto, do tipo
   redija a contestação: monte o mapa primeiro e só então redija. Use também
   para analisar autos, organizar caso, montar cronologia, avaliar viabilidade
   de ação ou achar o ponto fraco de uma tese. Não use para formatar ou
   timbrar texto já pronto (isso é peticao-rg) nem para revisar trecho
-  isolado. Se a skill mapa-de-caso-escritorio estiver instalada, ela tem
-  precedência: use esta apenas quando aquela não existir.
+  isolado. Se a skill mapa-de-caso-escritorio existir, ela tem precedência.
 ---
 
 # Mapa de Caso
@@ -177,7 +176,7 @@ Frentes típicas:
 
 - **Acórdão de turma**: só se veio da pesquisa. Sem exceção.
 - **Súmula, tema repetitivo, repercussão geral e artigo de lei**: pode citar, sempre marcando *conferir vigência* — súmula é cancelada e lei é revogada.
-- **Não encontrou?** "Não localizado" é resposta legítima e completa. Escreva `[CARECE DE PRECEDENTE]` e siga. Nunca preencha o buraco com o que parece existir.
+- **Não encontrou?** "Não localizado" é resposta legítima e completa. Escreva `[CARECE DE PRECEDENTE — <base>, <período>, <instâncias>]` e siga: a cobertura faz parte do marcador, porque zero resultado numa base parcial quer dizer "nada aqui", não "nada no tribunal". Nunca preencha o buraco com o que parece existir.
 - **Verifique o dispositivo antes de citar**: artigo lembrado de cabeça é a alucinação mais discreta que existe, porque o número está certo e o conteúdo não.
 - **Brainstorming da skill `insights-gemini` nunca vira `PR`** — é saída não verificada, mesmo quando parece pesquisa com fontes; serve no máximo para sugerir onde pesquisar.
 
