@@ -55,10 +55,11 @@ Fechado com um hook `PreToolUse` no próprio frontmatter do `leitor-de-autos`, e
 
 ### Alavancas que existem e que eu deliberadamente não puxei
 
-O frontmatter aceita mais coisa. Duas ficaram de fora, com motivo, para ninguém precisar redecidir isso do zero:
+O frontmatter aceita mais coisa. Três ficaram de fora, com motivo, para ninguém precisar redecidir isso do zero:
 
 - **`maxTurns`** — teto de turnos, com retorno marcado como parcial e retomável. Tentador depois de uma frente que rodou solta, mas qualquer número que eu escolhesse hoje seria arbitrário: não tenho a distribuição de turnos destes agentes, e um teto baixo demais custa uma retomada em todo caso grande. O que resolveu a frente solta foi pôr teto **no pedido**, não no turno.
 - **`experimental.cacheTtl`** — vida do cache de prompt. As frentes disparam em paralelo, numa mensagem só, com prompts diferentes: não há prefixo comum para reaproveitar entre elas. Não paga o próprio complicador.
+- **Jev / TypeSafe** (modelo não-gerativo para decisão tipada — `Choice`/`Score`/`Noul` em vez de texto; lançado 15/09/2026) — considerado e não adotado. A tese geral (classificação/roteamento barato, geração cara) já é como este ecossistema roteia: por **código determinístico** (segmento do número CNJ), sem gastar modelo nenhum, nem o mais barato. Onde a ideia teria peso de verdade — filtrar/ordenar candidato de jurisprudência antes da leitura integral — já foi medida aqui, contra um reranker dedicado, e o próprio Claude fazendo a triagem ganhou (`mcp-tjse-jurisprudencia` v1.1.0, 23/09: 59,5 % contra 53 %). E nos dois lugares que decidem por julgamento difícil — o `revisor-adversarial`, a contra-tese construída cega à tese do cliente — o ponto é decidir devagar e caro **de propósito**; um classificador rápido ali desfaz a escolha, não a otimiza. Revisitar só diante de um gargalo real do formato (alto volume de sim/não/qual-das-opções, baixo risco de errar) — e mesmo aí, due diligence de dado antes de qualquer `state` levar fato de caso: o DPA da TypeSafe (lido em 24/09) cobre GDPR/UK/Suíça/CCPA e não menciona LGPD uma vez sequer, a retenção-padrão é "pelo tempo necessário" (não zero — ZDR ali é add-on empresarial à parte) e a lista de subprocessadores fica fora do documento, num link que este ambiente não alcançou para conferir.
 
 Ordem de grandeza por milhão de tokens (entrada / saída), para calibrar: Fable $10/$50 · Opus $5/$25 · Sonnet $2/$10 · Haiku $1/$5. Na assinatura você não paga por token, mas a razão vale igual — é a velocidade com que o limite de uso queima.
 
