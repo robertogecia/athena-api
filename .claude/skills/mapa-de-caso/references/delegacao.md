@@ -1,0 +1,261 @@
+# Delegação de pesquisa e leitura
+
+Pesquisa boa depende de pergunta concreta. Por isso a delegação vem **depois** do inventário de nós: aí cada agente recebe a tese exata, o dispositivo, o tribunal e o que está em disputa — e não "pesquise sobre atraso de obra".
+
+Dispare todos os agentes **numa única mensagem, em paralelo**. São independentes entre si; rodar em série só desperdiça tempo.
+
+**Se os subagentes nomeados `pesquisador-juridico` e `leitor-de-autos` existirem** (`.claude/agents/`), use-os pelo nome — eles já têm a regra dura de citação e o escopo de ferramentas embutidos, então a delegação só precisa passar o concreto do caso (tese, dispositivo, documento), não reexplicar o método. Sem eles instalados, delegue a um agente genérico com as instruções completas de cada frente abaixo.
+
+Só a conversa principal lê e escreve em `~/segundo-cerebro/` — nenhum subagente tem essa tarefa. `pesquisador-juridico` nem tem ferramenta de arquivo (só JusRatio, os MCPs de tribunal e web); verifica e devolve, não consulta o acervo por conta própria.
+
+## Que modelo em cada nó
+
+Os subagentes nomeados já declaram `model: sonnet` no próprio arquivo. Sem essa linha eles herdariam o modelo da conversa — e quatro agentes de pesquisa rodariam no modelo mais caro fazendo trabalho delimitado.
+
+| Modelo | Onde | Por quê |
+|---|---|---|
+| **Sonnet** | as cinco frentes abaixo — pesquisar tese concreta, ler documento, conferir dispositivo | Trabalho delimitado, com pergunta já formulada e formato de resposta definido. É o padrão |
+| **Opus** | a conversa principal, que consolida — e qualquer agente cuja tarefa seja **achar o que está errado** | Divergência sutil entre o que foi pedido e o que voltou é onde modelo mais fraco concorda com o que lê. Este é o portão; não economize nele |
+| **Haiku** | quase nunca | Tem **200K de contexto, um quinto dos outros** — laudo extenso ou processo inteiro não cabe, e é o que a Frente 4 existe para ler. E **não aceita `effort` nenhum** (conferido na documentação em 17/09): num agente Haiku o segundo eixo de ajuste simplesmente não existe. Some-se a isso: se a tarefa é mecânica a esse ponto, pergunte antes se não é `grep` ou script |
+| **Fable** | por ora, não | Custa **o dobro do Opus** e não há nenhuma medição dele neste trabalho. Se um dia couber, é numa consolidação única de caso de valor alto — nunca nas frentes, que é onde está o volume |
+
+### A decisão, tarefa por tarefa
+
+Com a topologia do escritório instalada (`mapa-de-caso-escritorio`, `retorica-juridica`, `peticao-escritorio`, `acervo-de-teses`, mais o agente `revisor-adversarial`), a atribuição fica assim:
+
+| Tarefa | Onde roda | Modelo | `effort` | Por quê |
+|---|---|---|---|---|
+| Inventariar nós, ligar a cadeia, diagnosticar lacuna | conversa principal | Opus | o da sessão | É o julgamento do caso. Não delega |
+| Pesquisar jurisprudência (tese concreta já formulada) | `pesquisador-juridico` | Sonnet | `high` | Pergunta dada, formato de resposta dado — mas roteia por cinco motores e classifica *ratio*/*dictum* |
+| Ler documento pesado, transcrever literal | `leitor-de-autos` | Sonnet | `medium` | Transcrever não é julgar; ainda exige enxergar o que o documento não diz |
+| Verificar dispositivo legal vigente | `pesquisador-juridico` | Sonnet | `medium` | Checagem pontual e conferível |
+| Construir a contra-tese a partir só dos fatos | frente própria, sem ver a tese do cliente | Opus | `high` | Achar onde o caso quebra. Modelo fraco concorda com a moldura que recebeu |
+| Conferir a minuta contra o mapa | `revisor-adversarial` | Opus | `high` | É o portão. Não economize nele |
+| Decidir *como* argumentar | `retorica-juridica`, na conversa principal | Opus | o da sessão | Escolha de ordem e ênfase é próxima da decisão de tese |
+| Timbrar, inserir print, conferir citação contra ficha | `peticao-escritorio` | — | — | Determinístico: formatação e conferência de campo. Não é trabalho de modelo grande |
+| Depositar tese/precedente no acervo | conversa principal | — | — | Só com confirmação do usuário. Nunca um subagente decidindo sozinho o que entra |
+
+**Duas linhas da tabela não foram verificadas em arquivo, só pela descrição da skill:** `revisor-adversarial` e `retorica-juridica` — não li o corpo deles. A atribuição de Opus a ambos segue a regra geral abaixo (quem procura erro e quem decide ênfase vai em Opus), não uma leitura do que eles realmente fazem. Se os arquivos já declararem `model`/`effort` próprios, o que vale é o arquivo, não esta tabela.
+
+### O segundo eixo: `effort`
+
+Modelo é só metade do ajuste. O frontmatter do subagente aceita também `effort` (`low` · `medium` · `high` · `xhigh` · `max`), que sobrescreve o nível da sessão enquanto aquele agente roda e controla profundidade de raciocínio e gasto. Sem a linha, o subagente **herda o da sessão** — rodar o mapa em `high` põe as cinco frentes em `high` junto.
+
+`leitor-de-autos` continua em `effort: medium` — degrau abaixo do padrão, sem cair para `low` em tarefa que ainda exige enxergar o que um documento não diz.
+
+`pesquisador-juridico` subiu para `effort: high` em 14/09 — revisão, não medição. Quando o `medium` foi escolhido, o agente tinha uma rota (TJRO ou JusRatio). Hoje roteia por cinco motores com sintaxes de busca diferentes (JusRatio semântico, grupos+âncora do TJRO, BRS/CJF do TRF1, ePapyrus do TCE-RO e, desde 23/09, o índice local do TJSE, que se usa junto com o JusRatio), sondagem assíncrona do JusRatio, verificação de câmara por fecho/cabeçalho/índice, classificação `ratio_ou_dictum`, e a pesquisa de posição do órgão com teto de três acórdãos sob risco de bloqueio por automação. Tarefa que cresceu em julgamento pede mais raciocínio — mas segue **escolha fundamentada, não medida**: se a pesquisa vier rasa numa peça real, é o primeiro lugar a olhar antes de subir para `xhigh`.
+
+### Onde o limite virou permissão, não só instrução
+
+Auditoria (14/09): `pesquisador-juridico` já não tinha ferramenta de arquivo nenhuma — não conseguia ler `~/segundo-cerebro/` mesmo que tentasse, restrição estrutural desde o início. `leitor-de-autos` tinha `Read`/`Glob`/`Grep` e só a prosa dizia "nunca leia o segundo cérebro" — nada impedia de verdade, e é exatamente o agente que processa documento de origem adversária (o candidato natural a receber instrução escondida numa peça de terceiro).
+
+Fechado com um hook `PreToolUse` no próprio frontmatter do `leitor-de-autos`, escopado só a ele (`settings.json` seria da sessão inteira, e bloquearia a conversa principal também — que precisa ler o acervo). Nega `Read`/`Glob`/`Grep` cujo caminho contenha `segundo-cerebro`, antes da tentativa. Testado com os quatro casos que importam: nega por `file_path` (Read), nega por `path` (Glob/Grep), permite documento normal do caso, não quebra quando o caminho vem vazio.
+
+**`Bash` do mesmo agente ficou de fora, deliberadamente.** Ele existe só para o fallback de PyMuPDF em PDF que o `Read` nativo não abre — mas tecnicamente permite muito mais que isso, e restringi-lo a um padrão de comando específico (`Bash(...)` allow-list) arrisca quebrar esse fallback se o comando exato mudar. Ainda não fechado; fica anotado para não parecer descuido.
+
+### Alavancas que existem e que eu deliberadamente não puxei
+
+O frontmatter aceita mais coisa. Três ficaram de fora, com motivo, para ninguém precisar redecidir isso do zero:
+
+- **`maxTurns`** — teto de turnos, com retorno marcado como parcial e retomável. Tentador depois de uma frente que rodou solta, mas qualquer número que eu escolhesse hoje seria arbitrário: não tenho a distribuição de turnos destes agentes, e um teto baixo demais custa uma retomada em todo caso grande. O que resolveu a frente solta foi pôr teto **no pedido**, não no turno.
+- **`experimental.cacheTtl`** — vida do cache de prompt. As frentes disparam em paralelo, numa mensagem só, com prompts diferentes: não há prefixo comum para reaproveitar entre elas. Não paga o próprio complicador.
+- **Jev / TypeSafe** (modelo não-gerativo para decisão tipada — `Choice`/`Score`/`Noul` em vez de texto; lançado 15/09/2026) — considerado e não adotado. A tese geral (classificação/roteamento barato, geração cara) já é como este ecossistema roteia: por **código determinístico** (segmento do número CNJ), sem gastar modelo nenhum, nem o mais barato. Onde a ideia teria peso de verdade — filtrar/ordenar candidato de jurisprudência antes da leitura integral — já foi medida aqui, contra um reranker dedicado, e o próprio Claude fazendo a triagem ganhou (`mcp-tjse-jurisprudencia` v1.1.0, 23/09: 59,5 % contra 53 %). E nos dois lugares que decidem por julgamento difícil — o `revisor-adversarial`, a contra-tese construída cega à tese do cliente — o ponto é decidir devagar e caro **de propósito**; um classificador rápido ali desfaz a escolha, não a otimiza. Revisitar só diante de um gargalo real do formato (alto volume de sim/não/qual-das-opções, baixo risco de errar) — e mesmo aí, due diligence de dado antes de qualquer `state` levar fato de caso: o DPA da TypeSafe (lido em 24/09) cobre GDPR/UK/Suíça/CCPA e não menciona LGPD uma vez sequer, a retenção-padrão é "pelo tempo necessário" (não zero — ZDR ali é add-on empresarial à parte) e a lista de subprocessadores fica fora do documento, num link que este ambiente não alcançou para conferir.
+
+Ordem de grandeza por milhão de tokens (entrada / saída), para calibrar: Fable $10/$50 · Opus $5/$25 · Sonnet $2/$10 · Haiku $1/$5. Na assinatura você não paga por token, mas a razão vale igual — é a velocidade com que o limite de uso queima.
+
+**O modelo barato não segura o custo — o recorte segura.** Medido: uma frente de geração em Sonnet, com pedido sem teto, custou 1,6× mais tokens e 2,9× mais tempo que uma conferência adversarial em Opus, que era a tarefa difícil. Delegar em modelo menor sem limitar o tamanho do pedido não economiza nada.
+
+## Antes de tudo — já existe isso no segundo cérebro?
+
+Se a skill `segundo-cerebro` estiver instalada (`~/segundo-cerebro/`) e você ainda não conferiu o `indice.md` dela na Etapa 0, consulte agora, antes de delegar. Tese com nota lá já tem precedentes verificados com data — reconfirme se estiver com mais de 6 meses, mas não pesquise do zero o que já foi verificado.
+
+Hoje o acervo só guarda nota de tese e de precedente (Frente 1 — jurisprudência). Para doutrina (Frente 3) e leitura de documento (Frente 4) a consulta raramente vai achar algo — não custa conferir, mas não espere cobertura. Sem `segundo-cerebro` instalado, todas as frentes abaixo partem do zero.
+
+## Onde o custo está de verdade
+
+Antes de economizar no lugar errado: as skills e este arquivo somam alguns milhares de palavras por caso. **Uma frente de pesquisa que volta com trinta acórdãos e trechos literais custa várias vezes isso. Ler um laudo de duzentas páginas custa uma ordem de grandeza a mais.** O texto das instruções é ruído no orçamento; a delegação é o orçamento.
+
+Então não corte instrução para poupar token — corte **frente que não precisava existir**.
+
+| Corte à vontade | Nunca corte |
+|---|---|
+| Tese que o segundo cérebro já responde com `verificado_em` dentro de 6 meses | Verificar precedente antes de citar. Julgado não conferido não entra, e ponto |
+| Delegar num caso de um fato, uma prova, um pedido — a saída curta existe para isso | O mapa. Ele não é esforço extra, é o método |
+| Diagrama Mermaid, que já é opcional | O portão antes de gerar o documento final |
+| Segunda busca "para confirmar" quando a primeira foi ampla e clara | Leitura literal do documento que sustenta fato controvertido |
+| Reler documento que uma frente já leu e transcreveu | Registrar pesquisa que falhou — pesquisa não feita não pode parecer pesquisa sem resultado |
+
+A assimetria é o que decide: **token gasto à toa você perde uma vez; verificação pulada você perde o caso.** Por isso a economia é sempre na coleta, nunca na conferência.
+
+## Tempo
+
+Tempo aqui não é o modelo pensando — é frente mal recortada. As três coisas que mais custam relógio, medidas e não supostas:
+
+1. **Frentes disparadas em série.** São independentes: uma mensagem só, todas juntas. Rodar em fila multiplica a espera pelo número de frentes sem melhorar nada.
+2. **Pedido sem teto**, que é o campeão. Uma frente com recorte aberto demais consumiu quase o triplo do tempo de uma conferência adversarial que era a tarefa mais difícil da rodada.
+3. **Esperar em vez de reformular.** Frente muito mais lenta que as irmãs não está achando mais coisa — está sem limite. Interrompa.
+
+## Frente 1 — Jurisprudência (`pesquisador-juridico`, via JusRatio: tribunais superiores e de fora de RO)
+
+Um agente por tese estruturante. Teses acessórias podem ir juntas num agente só.
+
+O que a delegação precisa conter:
+
+- a **tese em uma frase**, com o dispositivo legal
+- o **fato concreto** a que ela se aplica (é o que separa precedente aplicável de ementa genérica)
+- a **contra-tese** que se espera — precedente contrário achado agora vale mais que surpresa na réplica
+- o **tribunal de interesse**, quando houver — tribunal com MCP próprio (TJRO, TRF1, TCE-RO) vai para a Frente 2, pelo seu MCP; o resto pelo JusRatio. A tabela de roteamento (chave pelo número CNJ, ou pela matéria de contas no caso do TCE-RO) é a do `pesquisador-juridico`, que já a aplica sozinho: basta nomear o tribunal na delegação
+- o **vocabulário** de cada tese: grupos de expressões equivalentes que os julgados podem usar para o mesmo fato ("negativação", "inscrição indevida", "cadastro de inadimplentes", "apontamento"). Quem monta é você, a conversa principal, porque é você que conhece o caso. Para divergir sobre terminologia de um setor, vale a skill `insights-gemini` — só com termo abstrato, nunca fato, parte ou número do caso. O agente parte daí e refina colhendo o vocabulário dos melhores resultados.
+- instrução de devolver, para cada julgado, a **ficha de precedente** no formato canônico do próprio agente — o mesmo que a `peticao-rg` confere no build e que o `segundo-cerebro` deposita. Não reescreva a lista de campos aqui: o agente já a tem, e duas listas desalinham com o tempo. O que vale lembrar na delegação é o que depende do caso: `fatos_relevantes` (2 a 4 fatos materiais de que a ratio depende — é o que permite o distinguishing depois), `limites` (a condição da ratio e o que o julgado NÃO sustenta) e, quando um número devolver mais de uma decisão, a lista de todas com data e resultado, dizendo qual é a da ficha
+
+Instruções operacionais para o agente:
+
+- **Uma busca abrangente vale mais que várias fatiadas.** Peça `limit` de 20 a 30 numa chamada só; fragmentar degrada o resultado.
+- Se for confirmar um julgado específico, **o número entra literal na query** ("REsp 1.234.567", "HC 843.649/RO") — a base tem busca exata por identificador, e sem o número no texto da consulta ele não dispara.
+- Priorize autoridade **A** (vinculante) e **B** (precedente qualificado).
+- **Superação é obrigatória em autoridade A e B** (súmula, vinculante, repetitivo, IRDR, repercussão geral): `listar_overruling_por_tema`, uma chamada por tema, e `overruling_status` preenchido na ficha. Tese boa que morreu é armadilha. Para acórdão de câmara não existe superação formal, e o JusRatio não cobre isso — ali `"não checado"` é a resposta honesta, e mudança de entendimento do órgão se apura pela Frente 2, não se presume.
+- **Cota mensal**: chamadas em janela de ~5 minutos contam como uma pesquisa. Não repita busca por capricho; se a cota estourar, o agente reporta e o mapa registra a tese como pendente.
+
+## Frente 2 — Precedente local e posição do órgão (TJRO)
+
+Quando o caso corre ou vai correr no TJRO, o entendimento da câmara que vai julgar pesa mais que o de tribunal distante. Se o relator já foi sorteado, como ele decide aquela tese é dado tático de primeira ordem: o escritório já viu relator com precedente próprio adverso à tese que se ia sustentar, e relator que era autor do paradigma que se queria citar.
+
+- **Tribunal com MCP próprio (TJRO desde 10/09/2026, TRF1 desde 11/09/2026, TCE-RO desde 13/09/2026) é só pelo seu MCP**, em qualquer período e grau — tabela no `pesquisador-juridico`. Sem o MCP na sessão, a frente fica `[PESQUISA NÃO REALIZADA]` e o mapa registra — o JusRatio não supre esses tribunais nem como reserva.
+- A busca é por palavras, então a delegação leva o **vocabulário** (ver Frente 1) e o agente segue o protocolo de três passos: grupos de sinônimos, âncora pela súmula ou tema citado, colheita do vocabulário do melhor resultado.
+
+**Quando houver relator ou câmara nomeados, peça "posição do órgão sobre a tese", com este teto:** uma busca filtrada por câmara (`orgao_colegiado`) e, quando disponível, por relator, com `por_pagina` alto; ordenação `recentes` ou `antigos`, nunca `relevantes`, que enviesa a amostra; e leitura integral de no máximo **três** acórdãos, os de fato mais próximos. O retorno separa entendimento reiterado do órgão de decisão isolada, aponta divergência entre câmaras quando houver (divergência interna é argumento e é risco) e diz quantos julgados foram efetivamente lidos. O filtro de câmara usa o **cadastro** do portal, que erra a câmara (a "3ª Câmara Cível" do cadastro traz acórdãos da 1ª e da 2ª): só conta como posição do órgão o acórdão cujo fecho confirma a câmara, e as regras de como conferir vivem no `pesquisador-juridico`.
+
+**O teto não é economia de token, é contenção de risco.** Varredura de centenas de acórdãos é exatamente o padrão que o filtro anti-automação do TJRO trata como ataque, e o escritório já levou bloqueio real. Amostra dirigida e declarada vale mais que estatística que derruba o acesso de todos.
+
+**No TJSE a conta é outra.** O MCP do TJSE busca num índice local — busca não toca o portal, e o motivo do teto acima (risco de bloqueio por varredura) não existe na busca. Ali, "posição do órgão" pode ir mais longe sem custo: filtro por órgão e relator, `cita=` com o tema ou a súmula da tese e `mapa_de_citacoes_tjse` mostram quais câmaras aplicam aquele precedente, e quais acórdãos do próprio TJSE elas mais reusam — inclusive anteriores ao período sincronizado. O teto de **três leituras integrais** continua, porque a primeira leitura de cada inteiro teor toca o portal. E **quem sincroniza é você, antes de delegar, uma vez**: rode `diagnostico_tjse`; se o período que as teses pedem não está coberto, `sincronizar_boletim_tjse` até "período completo". Nunca deixe isso para as frentes — elas rodam em paralelo, e sincronizar em paralelo é exatamente o que o servidor pede para não fazer.
+
+**Resultado não é posição.** Recurso provido por outro fundamento conta como provido e nada diz sobre a tese; contagem de resultados serve para escolher o que ler, nunca como conclusão. Quem afirma "a câmara rejeita essa tese" tem de ter lido os acórdãos que cita.
+
+## Frente 3 — Doutrina (`pesquisador-juridico`, via web)
+
+Para tese controvertida, nova, ou com pouca jurisprudência — onde o argumento precisa de autoridade acadêmica.
+
+- Peça **autor, obra, edição e página** quando o agente conseguir; doutrina sem referência não se cita.
+- Artigo de periódico jurídico, parecer publicado e manual de referência valem; post de blog e conteúdo de escritório valem como pista, não como fonte.
+- Instrução explícita: **não invente citação doutrinária**. Autor e obra existentes com tese trocada é erro comum e difícil de flagrar.
+
+## Frente 4 — Leitura de documento volumoso (`leitor-de-autos`)
+
+Um agente por documento pesado (laudo extenso, contrato longo, peça da parte contrária com muitos anexos).
+
+Peça de volta:
+
+- estrutura do documento (o que tem em cada faixa de páginas)
+- as **passagens literais** que importam, com número de página
+- datas, valores e nomes que aparecem — para cruzar com a cronologia
+- o que o documento **não** diz, quando a ausência for relevante (laudo que não conclui sobre nexo, contrato sem cláusula penal)
+
+Instrução importante: o agente devolve o que está escrito, não o que deduz. Interpretação vem depois, no mapa, e sob a regra do nó `A`.
+
+**Documento único enorme não é sempre "um agente, um documento".** Se um único PDF (os autos inteiros, por exemplo) passar de algumas centenas de páginas, divida por faixa — um `leitor-de-autos` por faixa, todos em paralelo, cada um citando exatamente a faixa que cobriu (ex.: "páginas 1-300", "páginas 301-600"). A Etapa 3 (ligar os nós) continua sendo onde alguém cruza o que voltou de cada faixa — nenhuma faixa vê as outras, então uma contradição entre elas (a mesma data com valor diferente em duas partes do processo) só aparece se você comparar depois, não porque um agente comparou sozinho.
+
+
+## Frente 5 — Verificação de dispositivo
+
+Quando a tese depende de artigo específico e o texto exato importa (prazo, requisito, vedação), vale um agente que confirme a redação vigente do dispositivo e se houve alteração recente.
+
+Artigo citado de cabeça é a alucinação mais discreta: o número está certo, o conteúdo não.
+
+## Quando o caso for grande demais
+
+Muitos documentos, muitos réus, muitos pedidos: pergunte ao usuário se ele quer rodar um **workflow de agentes** — leitura em paralelo de todos os documentos, depois pesquisa por tese, depois consolidação. Vale a pena a partir de umas dez frentes independentes; abaixo disso, subagentes em paralelo já dão conta e custam menos.
+
+Antes de disparar um workflow, escreva **o que reprova cada etapa** — e escreva de um jeito que dê para conferir sem julgar mérito: "todo julgado devolvido tem número, órgão, data e link", "toda passagem citada tem número de página", "nenhum fato entrou sem documento". Etapa que não pode reprovar não é etapa de pipeline: é fila. E o problema de rodar dez frentes sem isso não é o custo — é que o erro de uma delas chega ao mapa parecendo resultado.
+
+### Esteira ou barreira — a decisão que mais custa relógio
+
+Um workflow de várias etapas pode ser montado de dois jeitos, e escolher errado é o desperdício mais silencioso que existe aqui:
+
+- **Esteira** (`pipeline`): cada item percorre todas as etapas por conta própria. O laudo já está sendo conferido enquanto o contrato ainda está sendo lido. O relógio total é a **cadeia mais longa de um item só**.
+- **Barreira** (`parallel`): a etapa seguinte espera *todos* terminarem a anterior. O relógio total é a soma dos mais lentos de cada etapa.
+
+**A esteira é o padrão.** A barreira se justifica só quando a etapa seguinte precisa do conjunto inteiro para existir:
+
+| Barreira justificada | Barreira injustificada |
+|---|---|
+| Deduplicar antes de verificar — três frentes acharam o mesmo REsp, e verificar três vezes é cota jogada fora | "Preciso juntar as listas numa só" — juntar é código, faz dentro da etapa |
+| Cruzar para achar contradição — a mesma data com valor diferente em duas faixas do PDF só aparece comparando | "As etapas são conceitualmente separadas" — separadas não é o mesmo que sincronizadas |
+| Sair fora se o total for zero: nenhum precedente achado, não há o que verificar | "Fica mais limpo o código" — a espera é real e custa relógio |
+
+No caso concreto isto tem tradução direta: **ler cada documento e conferir o que ele devolveu é esteira** — a conferência da faixa 1-300 não depende da faixa 301-600 ter voltado. **A Etapa 3 do mapa é barreira de verdade**, e é a única obrigatória: ligar os nós exige ter todas as frentes na mesa, porque é exatamente ali que a contradição entre elas aparece. Isso não é limitação da ferramenta; é a razão pela qual a consolidação é sua e não de um agente.
+
+### Varredura até secar
+
+Para achado de tamanho desconhecido — quantos vícios tem um contrato longo, quantos pontos da inicial ficaram sem impugnação — contar não funciona: "ache dez" para nos dez, e "ache todos" não tem critério de parada. O que funciona é rodar frentes até **duas rodadas seguidas não trazerem nada novo**.
+
+Com uma armadilha que precisa estar escrita: **compare o novo achado contra tudo que já apareceu, não contra o que foi confirmado.** Se a comparação for só contra os confirmados, todo achado que a conferência rejeitou volta na rodada seguinte como se fosse novidade, é reconferido, é rejeitado outra vez — e a varredura nunca seca. O descarte também é memória.
+
+### Onde o workflow não entra
+
+Nada disso vale para o que decide o caso. Esteira, barreira e varredura organizam **coleta e conferência**; tese, pedido e protocolo continuam na faixa que não abre. Um workflow que "decide" qual tese sustentar não é orquestração melhor — é a decisão do advogado delegada por acidente de arquitetura.
+
+Duas restrições técnicas que valem saber antes de desenhar: só umas dez frentes correm de fato ao mesmo tempo (o resto fica na fila, mesmo que você dispare cem), e frente que morre ou que o usuário pula volta vazia em vez de dar erro — quem consolida tem de tratar "voltou vazia" como `[PESQUISA NÃO REALIZADA]`, nunca como "não achou nada".
+
+
+## `/loop` e Routine — por que nenhum aparece nas frentes acima
+
+`/loop` vive só na sessão atual: some ao abrir conversa nova, sem aviso, e não tem como retomar um disparo perdido — mesmo no modo fixo, expira em 7 dias. É para "polling rápido durante uma sessão", não para nada que precise sobreviver ao fim dela. Prazo processual, ou qualquer checagem que precise rodar mesmo com o Claude fechado, pede **Routine** (agendamento que sobrevive à sessão), nunca `/loop`.
+
+Tem um caso específico onde `/loop` seria o erro certo, não só o genérico: o lint do `segundo-cerebro`. A skill diz — "não rode isso sozinho a cada sessão, é comando do usuário, não hook automático" — de propósito: sigilo (a base pode ter trecho de auto colado) e é o advogado quem decide quando a base está pronta para ser conferida. Um `/loop` diário rodando o lint sozinho desfaria essa decisão, não a executaria.
+
+## Consolidando
+
+Agentes em paralelo não conversam entre si — cada um só enxerga o próprio pedaço. Isso é seguro quando a tarefa é checável rápido (achou o julgado certo? leu o PDF certo?) e perigoso quando a coerência entre as frentes importa e ninguém olhou o conjunto. Antes de consolidar, é você — não os agentes — quem cruza os resultados:
+
+- **Compare achados de frentes diferentes antes de virarem `PR` na mesma matriz.** Duas pesquisas sobre teses vizinhas podem trazer precedentes que se contradizem, ou um julgado que uma frente marcou como vigente e outra (ou a verificação de dispositivo) indica superado. Divergência entre agentes é sinal para checar, não para escolher o resultado que chegou primeiro.
+- julgado vira nó `PR` **só** com identificação completa e link;
+- o que não foi encontrado vira `[CARECE DE PRECEDENTE — <base>, <período>, <instâncias>]`, não vira suposição. **A cobertura é parte do marcador**, não detalhe: zero resultado numa base parcial diz "nada aqui", não "nada no tribunal". Medido no índice do TJSE (21/09/2026, gabarito montado às cegas): mesmo quando a busca acha, ela acha entre 11 % e 80 % dos acórdãos essenciais, conforme a tese. `[CARECE DE PRECEDENTE]` sem cobertura se lê como "não existe" — e é por esse marcador que o advogado decide largar uma tese;
+- fato novo que apareceu na leitura de documento entra como `F` (documento comprova); leitura interpretativa entra como `A`;
+- se um agente falhou ou a cota estourou, **registre isso no mapa** — pesquisa não feita não pode se parecer com pesquisa sem resultado.
+
+**Se for delegar a conferência de uma frente, dê a ela os autos, não o relatório da primeira.** Um agente que confere lendo o resumo de quem pesquisou herda o enquadramento junto: ele valida a moldura em vez de testá-la, e devolve concordância que parece verificação. Passe a tese, o fato concreto e o documento — as mesmas coisas que a primeira frente recebeu — e compare as duas respostas você. Duas leituras independentes que batem valem alguma coisa; uma leitura e o eco dela não valem nada.
+
+### Isso resolve metade do problema
+
+A outra metade: se quem produziu e quem confere leram a **mesma especificação ambígua** e resolveram a ambiguidade do mesmo jeito, a conferência concorda por motivo nenhum — não porque o trabalho está certo, mas porque os dois vieram da mesma cabeça. Dar os autos em vez do relatório não protege contra isso.
+
+Foi o que aconteceu ao corrigir o lint do segundo cérebro nesta sessão. Um agente auditou o código contra a especificação e achou quinze defeitos reais — mas não podia achar que minha implementação e meus próprios casos de teste liam um detalhe não especificado (o formato de citação no índice) do mesmo jeito, porque os dois vieram de mim. Só apareceu quando um segundo agente, **sem nunca ver o código**, construiu sua própria versão a partir só da especificação — e a leitura dele divergiu da minha.
+
+Duas técnicas, dois alvos diferentes:
+
+| Técnica | Acha | Não acha |
+|---|---|---|
+| **Auditoria** — lê a especificação e o que já foi produzido, procura onde quebra | erro de implementação: comparação invertida, campo nunca lido, regra ao contrário | suposição que quem audita compartilha com quem produziu, por terem lido o mesmo texto ambíguo |
+| **Produção paralela independente** — lê só a especificação, nunca o que já foi produzido, monta a própria versão do zero | suposição não escrita — a segunda versão resolve a ambiguidade sem saber como a primeira resolveu | é mais lenta e mais cara; não vale para todo caso |
+| **Dado real em escala** — rodar sobre o volume de verdade e procurar anomalia estatística | o que a amostra é pequena demais para conter | nada que o volume não exponha; e não diz a causa, só que há uma |
+
+A terceira linha veio do MCP do TJSE, e com dois casos que nenhuma das outras duas pegaria. Dois red teams adversariais, sobre o código, não acharam que só a primeira página de cada seção do Boletim era lida — perda silenciosa de ~35 % das câmaras cíveis — porque a edição de teste cabia numa página; quem denunciou foram quatro seções com **exatamente 995** itens. E a suposição de que o número do acórdão tem 9 dígitos veio de uma amostra, viveu em três lugares e só caiu quando medida no corpus inteiro (16,5 % têm menos) — um desses lugares era o lint de citações da peça, onde o número curto passava do portão **sem ficha e sem conferência**. Suposição tirada de amostra não falha alto: falha deixando passar.
+
+**No mapa isso já existe, em forma jurídica: é o nó `CT`.** Contra-tese vale mais construída a partir dos fatos crus do que como resposta à tese já escrita — é por isso que a Frente 1 pede "a contra-tese que se espera" junto da pesquisa favorável, não depois dela. Para tese estruturante, onde o resultado do caso pode depender de qual leitura dos fatos prevalece, considere uma frente que recebe só os fatos, sem ver a tese do cliente, para construir a contra-tese — mais caro, e por isso reservado ao que a palavra "estruturante" já filtra no início da Frente 1.
+
+
+## Quando uma frente volta errada
+
+Uma frente voltou ruim — ementa genérica em vez de precedente aplicável, leitura que interpretou em vez de transcrever, cota estourada no meio. **Devolva só aquela frente.**
+
+Reabrir o lote inteiro é o erro caro aqui, e ele não parece erro: as outras três frentes voltavam certas, são refeitas, e a nova versão vem *diferente*, não melhor — porque não havia nada errado nelas. Agora você tem quatro resultados para reconferir e três que podem falhar desta vez por motivo novo. Uma falha virou quatro incertezas. Feito duas vezes na mesma análise, o mapa não fecha nunca.
+
+Visto de fora isso parece o agente falhando em série. Não é: é o caminho de volta destruindo trabalho que já estava bom.
+
+Cinco coisas viajam com a devolução, e cada uma faz um serviço:
+
+```
+UNIDADE     Frente 1 — tese da prescrição intercorrente
+VEREDITO    reprovado
+MOTIVO      trouxe ementa genérica, não precedente com o mesmo fato
+EVIDÊNCIA   os 3 acórdãos são de execução fiscal; nosso caso é execução de título extrajudicial
+ESCOPO      refaça só esta tese; não toque nas outras frentes nem no que já entrou no mapa
+```
+
+A linha do **escopo** parece burocracia e não é. Sem ela a frente devolvida cresce: o agente reabre a busca, encontra outra tese interessante de passagem, traz junto — e a sua correção de uma frente virou material novo que ninguém pediu e que entra no mapa sem conferência.
+
+**Ponha limite de tamanho na delegação, não só de assunto.** Pedido sem teto cresce sozinho: "cubra todas as hipóteses" e "uma por item" se multiplicam, e cada item costuma arrastar contexto próprio para fazer sentido. Diga quantos — quantos julgados, quantas páginas, quantas frentes — e o agente para onde você mandou parar. Sem teto, o custo não é proporcional à dificuldade da tarefa: é proporcional à imaginação de quem executa.
+
+**Confira quem está fora há tempo demais.** Se uma frente demora muito mais que as outras da mesma rodada, o problema quase nunca é a frente ser mais difícil — é o recorte dela estar aberto demais. Interrompa e reformule em vez de esperar; esperar não conserta briefing.
+
+**Pare na terceira tentativa.** Se a mesma frente falha três correções, o problema não está no agente: está na pergunta que você formulou — tese mal recortada, dispositivo errado, fato concreto que não é o que separa os precedentes. E o agente não enxerga a pergunta, só a resposta. Reformule a delegação, ou registre a tese como pendência de pesquisa no mapa e siga. Insistir uma quarta vez gasta cota e devolve a mesma coisa.

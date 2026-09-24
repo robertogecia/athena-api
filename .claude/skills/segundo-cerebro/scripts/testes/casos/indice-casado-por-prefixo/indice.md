@@ -1,0 +1,1 @@
+- precedentes/stj-resp-1234567-forca-maior — STJ, atraso de obra
