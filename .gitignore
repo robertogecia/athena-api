@@ -1,0 +1,4 @@
+# Worktrees que o harness do Claude Code cria para agentes isolados
+# (isolation: "worktree") — cópia de trabalho efêmera, auto-limpa quando
+# sem mudanças; nunca é o lugar de um commit de verdade.
+.claude/worktrees/
