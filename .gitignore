@@ -2,3 +2,7 @@
 # (isolation: "worktree") — cópia de trabalho efêmera, auto-limpa quando
 # sem mudanças; nunca é o lugar de um commit de verdade.
 .claude/worktrees/
+
+# Bytecode do Python gerado ao rodar lint.py
+__pycache__/
+*.pyc
