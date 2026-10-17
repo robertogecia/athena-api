@@ -1,0 +1,86 @@
+--- peticao-rg-correcao/BASE-instalada-14-09.md	2026-09-15 18:49:15.708955874 +0000
++++ peticao-rg-correcao/SKILL.md	2026-09-15 18:49:15.706656051 +0000
+@@ -24,9 +24,23 @@
+ 
+ ## Fluxo
+ 
+-1. Redija o conteúdo da peça (o mérito jurídico é seu trabalho normal;
+-   esta skill cuida só da forma).
++0. **É peça contenciosa? Procure o mapa antes de escrever qualquer linha.**
++   Inicial, contestação, réplica, reconvenção, impugnação, recurso, parecer e
++   afins: dê um `ls` na pasta do caso atrás do mapa do `mapa-de-caso`
++   (`mapa-do-caso.md`, `mapa*.md`) e leia a seção "Quando vem de um mapa de
++   caso" antes de continuar — vale mesmo que o pedido tenha chegado como
++   "gera o DOCX timbrado". **Não achou mapa? Pergunte**: "não localizei mapa
++   deste caso — quer que eu rode o `mapa-de-caso` primeiro, ou redijo
++   direto?". Nunca leia "não achei" como autorização para redigir do zero —
++   é exatamente aí que sai peça bonita e sem lastro. Documento que não é peça
++   contenciosa (procuração, contrato, notificação, mero expediente) pula
++   direto para o passo 1.
++1. Redija o conteúdo da peça — a partir do mapa, se houver (o mérito jurídico
++   é seu trabalho normal; esta skill cuida só da forma).
+ 2. Monte um JSON de blocos (formato abaixo) e salve em arquivo temporário.
++   **Veio de mapa? Antes de montar o JSON**, confirme que nenhum item 🔴, ⏰,
++   🟡, `[PESQUISA NÃO REALIZADA]` ou `[CONTRÁRIO NÃO RESOLVIDO]` ficou sem
++   decisão do advogado — a lista completa está na seção acima.
+ 3. Gere o DOCX:
+    ```bash
+    python3 <skill>/scripts/build_docx.py entrada.json
+@@ -54,6 +68,57 @@
+ por extenso e legível (não abreviado), e o primeiro nome (ou nome usual)
+ do cliente, como o usuário já se refere a ele na conversa.
+ 
++## Quando vem de um mapa de caso
++
++Se a skill `mapa-de-caso` rodou antes (mapa salvo na pasta do caso ou montado
++na conversa), ele é a fonte do conteúdo — não reescreva do zero:
++
++- **Dos Fatos** sai da cronologia do mapa, na ordem das datas, cada fato com a
++  prova citada por arquivo e folhas.
++- **Do Direito** sai da matriz de amarração: um bloco por pedido, subindo tese
++  → fato → prova → precedente verificado — a citação é a **ficha de
++  precedente** inteira (ver "Citações verificadas" abaixo), não um resumo
++  solto. Precedente que o mapa marcou como "aplica por extensão" entra na
++  peça dizendo que é extensão, em parágrafo próprio, fora das aspas — não
++  como se a ratio batesse direto.
++- **Pedidos** saem dos nós `PD`, na ordem de dependência lógica.
++
++**PARE antes de gerar se o mapa deixou qualquer coisa para resolver antes do
++protocolo** — não só o que está marcado 🔴, mas também prazo e preclusão (⏰),
++tese em 🟡 que dependa de decisão sua, precedente com `[PESQUISA NÃO
++REALIZADA]` (a pesquisa não rodou — não é "não localizado"),
++`[CONTRÁRIO NÃO RESOLVIDO]` (precedente adverso que ninguém leu até o fim), e
++`PR` que o mapa marcou "distingue" de um fato do caso (o precedente não
++sustenta a tese como está — citá-lo assim é o erro que a parte contrária
++desmonta em uma linha). Diga quais são, explique o que cada uma muda no
++documento, e pergunte antes de montar o JSON. Não é formalidade: uma
++reconvenção que precluiu, ou uma peça que alega vício oculto e avaria
++aparente ao mesmo tempo, custa o caso — e o DOCX timbrado sai igualmente
++bonito nos dois casos.
++
++Liste **item a item**, cada um com o que muda no documento, e colha a resposta
++do advogado **por item** — um "pode gerar" global não é decisão informada, é o
++portão sendo cumprido por fora.
++
++Se ele mandar gerar assim mesmo, **gere — e deixe a pendência visível no
++documento entregue**, não só na conversa: o trecho afetado sai marcado (ex.:
++"[PENDENTE: confirmar se a avaria era aparente]") e você repete a lista na
++mensagem de entrega, dizendo que o arquivo não é versão de protocolo.
++
++**Pendência de prazo não se resolve com marcador.** Um "[PENDENTE]" dentro da
++contestação não preserva uma reconvenção que tinha de ser oferecida no mesmo
++ato, nem uma preliminar que precluiu — o documento sai marcado e o direito
++morre igual. Para item ⏰ só existem duas saídas: redigir agora o que precisa
++ser apresentado junto, ou o advogado dizer, por escrito, que está abrindo mão.
++Não ofereça a terceira.
++
++Tese que o mapa marcou como pendente de pesquisa entra na peça marcada como
++pendente, ou não entra. Nunca preencha o "Do Direito" com jurisprudência
++lembrada de memória — e lembre que o lint de citações (seção "Citações
++verificadas" abaixo) confere a peça contra a ficha no build, mas quem escreve
++a ficha é o `pesquisador-juridico`; este portão aqui é anterior a isso, e
++existe para nem chegar a montar o JSON com pendência sem decisão do advogado.
++
+ ## Formato do JSON
+ 
+ ```json

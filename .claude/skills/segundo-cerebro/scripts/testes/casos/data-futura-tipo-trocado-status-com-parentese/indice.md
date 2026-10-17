@@ -1,0 +1,5 @@
+- stj-resp-ano-trocado
+- stf-tema-1234-repercussao
+- stj-sumula-322
+- t1
+- 2026-caso

@@ -1,0 +1,33 @@
+# Um caso por linha: pasta | código de saída | rótulos esperados
+#
+# Cada caso é a reprodução concreta de um defeito que o lint já teve, e existe
+# para impedir que ele volte. Rode com: python3 testes/rodar.py
+#
+# Dois casos devem ficar LIMPOS (código 0) — são a conferência de falso
+# positivo, e falso positivo é o que faz um lint ser ignorado:
+#   transitivo-no-sentido-documentado · elo-declarado-so-no-precedente
+#
+# independente-limpo e independente-sujo vieram de fixtures escritas a partir
+# da especificação por quem NÃO viu o código deste script — foi esse par que
+# pegou o falso positivo de índice que as fixtures caseiras não pegavam,
+# porque as caseiras escreviam o índice no formato que o código já esperava.
+# O gabarito delas está em casos/GABARITO-INDEPENDENTE.md.
+#
+# independente-limpo espera PENDENTE:1 de propósito: a nota tem marcador
+# PENDENTE bem usado. O gabarito independente considera que uso correto do
+# marcador não deveria virar achado; aqui ele vira, porque a nota de fato
+# ainda depende de abrir o acórdão. É divergência de leitura, não defeito —
+# e o rótulo é PENDÊNCIA, nunca erro.
+bom-e-lista-inline-aberta|2|ARQUIVAR?:1 CAMPO-FALTANDO:1 MALFORMADO:1 RECONFIRMAR:1
+data-futura-tipo-trocado-status-com-parentese|2|ARQUIVAR?:1 CAMPO-FALTANDO:3 MALFORMADO:2 REBAIXAR:1
+elo-declarado-so-no-precedente|0|
+independente-limpo|1|PENDENTE:1
+independente-sujo|2|ARQUIVAR?:2 BASE-FRACA:1 CAMPO-FALTANDO:3 FORA-DO-INDICE:5 MALFORMADO:3 REBAIXAR:1 RECONFIRMAR:1
+indice-casado-por-prefixo|1|CAMPO-FALTANDO:1 FORA-DO-INDICE:1
+indice-e-slug-repetido|2|ARQUIVAR?:1 CAMPO-FALTANDO:4 FORA-DO-INDICE:1 MALFORMADO:1 RECONFIRMAR:1
+indice-fora-de-utf8|2|CAMPO-FALTANDO:1 FORA-DO-INDICE:1 MALFORMADO:1
+lista-em-bloco|2|CAMPO-FALTANDO:2 REBAIXAR:1 REF-QUEBRADA:1
+nota-ilegivel-nao-e-referencia-quebrada|2|CAMPO-FALTANDO:2 MALFORMADO:1
+pendente-nao-casa-em-independentemente|1|PENDENTE:1
+slug-repetido-esconde-precedente-vencido|2|ARQUIVAR?:1 CAMPO-FALTANDO:2 MALFORMADO:1 RECONFIRMAR:1
+transitivo-no-sentido-documentado|0|
